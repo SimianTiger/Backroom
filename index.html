@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Mensagem — M.E.G</title>
+    <!-- Using Inter for a clean, Apple-like sans-serif, and Playfair Display for elegant serif -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-primary: rgba(255, 255, 255, 0.9);
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --accent: #c8a96e;
+            /* Dark gold/premium */
+            --accent-hover: #e0bf80;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            overflow: hidden;
+            /* Prevents scroll if not needed, everything is full screen */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            z-index: 100;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(5, 5, 5, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-logo {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            color: var(--text-primary);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+
+        .nav-meta {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-tag {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .nav-status {
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-status::before {
+            content: '';
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 6px #4ade80;
+            margin-right: 6px;
+            animation: pulse-green 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { opacity: 1; box-shadow: 0 0 6px #4ade80; }
+            50%       { opacity: 0.3; box-shadow: none; }
+        }
+
+        .nav-cta {
+            font-size: 0.8rem;
+            color: var(--bg-color);
+            background-color: var(--text-primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background-color: #fff;
+            transform: scale(1.05);
+        }
+
+        /* ── MAIN SCENE ── */
+        .scene {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #sequence-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            /* Ensures canvas covers the area, acting like background-size: cover */
+            z-index: 1;
+            pointer-events: none;
+            /* Let clicks pass through to UI */
+        }
+
+        /* ── OVERLAYS & UI ── */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            /* Text shouldn't block hovering */
+        }
+
+        /* Phase Text Containers */
+        .phase {
+            position: absolute;
+            top: 30%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .phase.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .phase-headline {
+            font-family: var(--font-serif);
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .phase-subheadline {
+            font-family: var(--font-sans);
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            font-weight: 300;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .phase-bullets {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .phase-bullets span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .phase-bullets span::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 4px;
+            background-color: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* Trigger Button */
+        .trigger-container {
+            position: absolute;
+            bottom: 15%;
+            z-index: 20;
+            pointer-events: auto;
+        }
+
+        .btn-trigger {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            padding: 1rem 3rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border-radius: 100px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-trigger::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(200, 169, 110, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .btn-trigger:hover {
+            transform: scale(1.05) translateY(-2px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(200, 169, 110, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(200, 169, 110, 0.1);
+        }
+
+        .btn-trigger:hover::before {
+            opacity: 1;
+        }
+
+        .btn-trigger.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+
+        /* Action Buttons for Phase 4 */
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+            pointer-events: auto;
+            /* Enable click */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .phase.active .action-buttons {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.4s;
+            /* Slight delay after phase text appears */
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--bg-color);
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            padding: 0.8rem 2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* ── PRELOADER ── */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        #preloader.loaded {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-line {
+            width: 200px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .loader-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            transition: width 0.1s ease;
+        }
+
+        .loader-text {
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* VIGNETTE & GRAIN FOR CINEMATIC FEEL */
+        .vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, transparent 40%, rgba(5, 5, 5, 0.85) 120%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .grain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .phase-headline {
+                font-size: 2.5rem;
+            }
+
+            .phase-bullets {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+                padding: 0 2rem;
+            }
+
+            .action-buttons a {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="loader-line">
+            <div class="loader-progress" id="progress-bar"></div>
+        </div>
+        <div class="loader-text" id="progress-text">Carregando Arquivo... 0%</div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <span class="nav-logo">M.E.G</span>
+        <div class="nav-meta">
+            <span class="nav-tag">Relatório #31-C</span>
+            <span class="nav-tag nav-status">Ativo</span>
+        </div>
+        <a href="nivel-7.html" class="nav-cta">Acessar Arquivo</a>
+    </nav>
+
+    <!-- SCENE -->
+    <main class="scene">
+        <!-- The Canvas where frames will be drawn -->
+        <canvas id="sequence-canvas"></canvas>
+        <div class="vignette"></div>
+        <div class="grain"></div>
+
+        <!-- UI Overlays -->
+        <div class="ui-layer">
+
+            <!-- Phase 1: HERO -->
+            <div class="phase active" id="phase-1">
+                <h1 class="phase-headline">A Mensagem.</h1>
+                <p class="phase-subheadline">Alguém conseguiu sair. Poucos conseguem.</p>
+            </div>
+
+            <!-- Phase 2: O SELO -->
+            <div class="phase" id="phase-2">
+                <h1 class="phase-headline">Classificado.</h1>
+                <p class="phase-subheadline">A M.E.G não deveria ter enviado isso.</p>
+            </div>
+
+            <!-- Phase 3: O DESDOBRAMENTO -->
+            <div class="phase" id="phase-3">
+                <h1 class="phase-headline">O que está dentro,<br>não pode ser desfeito.</h1>
+                <p class="phase-subheadline">Leia por sua conta e risco.</p>
+            </div>
+
+            <!-- Phase 4: A MENSAGEM -->
+            <div class="phase" id="phase-4">
+                <h1 class="phase-headline" style="font-size: clamp(2rem, 4vw, 3.5rem);">Palavras que permanecem.</h1>
+                <p class="phase-subheadline">Leia nas entrelinhas.</p>
+                <div class="action-buttons">
+                    <a href="nivel-7.html" class="btn-primary">Ler o conteúdo</a>
+                    <a href="#" class="btn-secondary">Guardar carta</a>
+                </div>
+            </div>
+
+            <!-- Trigger Button -->
+            <div class="trigger-container">
+                <button class="btn-trigger" id="reveal-btn">Revelar Mensagem</button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('sequence-canvas');
+            const ctx = canvas.getContext('2d', { alpha: false }); // Optimize for no transparency needed in bg
+            const revealBtn = document.getElementById('reveal-btn');
+
+            // Phase Elements
+            const phases = [
+                document.getElementById('phase-1'),
+                document.getElementById('phase-2'),
+                document.getElementById('phase-3'),
+                document.getElementById('phase-4')
+            ];
+
+            // Setup variables
+            const totalFrames = 192;
+            const images = [];
+            let loadedImages = 0;
+
+            // Animation variables
+            let currentFrameIndex = 0;
+            let targetFrameIndex = 0;
+            let fps = 24;
+            let interval = 1000 / fps;
+            let lastDrawTime = 0;
+            let animationFrameId = null;
+
+            // Preload logic
+            const preloader = document.getElementById('preloader');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            const currentFrameNum = index => `frames_hq/frame-${(index + 1).toString().padStart(3, '0')}.jpg`;
+
+            for (let i = 0; i < totalFrames; i++) {
+                const img = new Image();
+                img.src = currentFrameNum(i);
+
+                img.onload = () => {
+                    loadedImages++;
+                    let progress = Math.floor((loadedImages / totalFrames) * 100);
+                    progressBar.style.width = progress + '%';
+                    progressText.innerText = `Carregando Arquivo... ${progress}%`;
+
+                    if (loadedImages === totalFrames) {
+                        setTimeout(() => {
+                            preloader.classList.add('loaded');
+                            initCanvas();
+                        }, 500); // slight delay to show 100%
+                    }
+                };
+
+                img.onerror = () => {
+                    console.error(`Erro ao carregar o frame ${i + 1}`);
+                    loadedImages++; // increment anyway to not block
+                };
+
+                images.push(img);
+            }
+
+            // Canvas initialization and sizing
+            function initCanvas() {
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+
+                // Draw first frame immediately
+                drawFrame(0);
+
+                // Setup event listeners for button
+                revealBtn.addEventListener('mouseenter', handleMouseEnter);
+                revealBtn.addEventListener('mouseleave', handleMouseLeave);
+            }
+
+            function resizeCanvas() {
+                // To fill the screen but keep aspect ratio, we can use object-fit in CSS
+                // We just need to set the internal resolution of the canvas to match the image ratio
+                if (images[0] && images[0].complete) {
+                    canvas.width = images[0].naturalWidth;
+                    canvas.height = images[0].naturalHeight;
+
+                    // Re-draw current frame to avoid blank canvas on resize
+                    drawFrame(currentFrameIndex);
+                } else {
+                    // Fallback
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+            }
+
+            function drawFrame(index) {
+                if (images[index] && images[index].complete) {
+                    ctx.drawImage(images[index], 0, 0, canvas.width, canvas.height);
+                }
+            }
+
+            function updatePhases(frame) {
+                // Determine which phase is active based on frame index
+                // Total frames: 192
+                // Phase 1: 0 to 32
+                // Phase 2: 33 to 80
+                // Phase 3: 81 to 144
+                // Phase 4: 145 to 191
+
+                let activePhaseIndex = 0;
+
+                if (frame >= 0 && frame <= 32) {
+                    activePhaseIndex = 0;
+                } else if (frame > 32 && frame <= 80) {
+                    activePhaseIndex = 1;
+                } else if (frame > 80 && frame <= 144) {
+                    activePhaseIndex = 2;
+                } else if (frame > 144) {
+                    activePhaseIndex = 3;
+                }
+
+                // Update DOM classes
+                phases.forEach((el, index) => {
+                    if (index === activePhaseIndex) {
+                        if (!el.classList.contains('active')) {
+                            el.classList.add('active');
+                        }
+                    } else {
+                        if (el.classList.contains('active')) {
+                            el.classList.remove('active');
+                        }
+                    }
+                });
+            }
+
+            // Animation Loop
+            function animate(currentTime) {
+                if (!lastDrawTime) lastDrawTime = currentTime;
+
+                let deltaTime = currentTime - lastDrawTime;
+
+                if (deltaTime >= interval) {
+                    // Update logic
+                    if (currentFrameIndex < targetFrameIndex) {
+                        currentFrameIndex++;
+                    } else if (currentFrameIndex > targetFrameIndex) {
+                        currentFrameIndex--;
+                    }
+
+                    drawFrame(currentFrameIndex);
+                    updatePhases(currentFrameIndex);
+
+                    lastDrawTime = currentTime - (deltaTime % interval);
+                }
+
+                // Continue requesting animation frame if we haven't reached target
+                if (currentFrameIndex !== targetFrameIndex) {
+                    animationFrameId = requestAnimationFrame(animate);
+                } else {
+                    animationFrameId = null; // Stop looping when done
+                }
+            }
+
+            function handleMouseEnter() {
+                targetFrameIndex = totalFrames - 1; // 239
+                if (!animationFrameId) {
+                    lastDrawTime = performance.now();
+                    animationFrameId = requestAnimationFrame(animate);
+                }
+            }
+
+            function handleMouseLeave() {
+                targetFrameIndex = 0; // 0
+                if (!animationFrameId) {
+                    lastDrawTime = performance.now();
+                    animationFrameId = requestAnimationFrame(animate);
+                }
+            }
+
+            // Navbar Scroll Effect (in case we have any scrollable content)
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+            window.addEventListener('wheel', (e) => {
+                if (e.deltaY > 0) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    if (window.scrollY === 0) navbar.classList.remove('scrolled');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

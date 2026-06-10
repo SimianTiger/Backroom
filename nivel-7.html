@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nível -7 — Backrooms</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
+
+    :root {
+      --bg: #0a0a08;
+      --paper: #0e0e0b;
+      --muted: #1a1a14;
+      --border: #2a2a1e;
+      --dim: #4a4a38;
+      --body: #b8b49a;
+      --accent: #c8a96e;
+      --red: #8b2020;
+      --red-glow: #c03030;
+      --mono: 'Share Tech Mono', monospace;
+      --serif: 'IM Fell English', serif;
+      --sans: 'Barlow Condensed', sans-serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRAIN OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(3rem, 8vh, 5rem);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 40%, #1a0a0a 0%, transparent 70%),
+        radial-gradient(ellipse 80% 60% at 20% 80%, #0a0e0a 0%, transparent 60%),
+        var(--bg);
+    }
+
+    /* pulsing red dot — the "warden is listening" indicator */
+    .warden-pulse {
+      position: absolute;
+      top: clamp(1.5rem, 4vh, 3rem);
+      right: clamp(1.5rem, 4vw, 3rem);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--red-glow);
+      text-transform: uppercase;
+    }
+
+    .warden-pulse .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--red-glow);
+      box-shadow: 0 0 8px var(--red-glow);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 8px var(--red-glow);
+      }
+
+      50% {
+        opacity: 0.25;
+        box-shadow: none;
+      }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(3.8rem, 10vw, 8rem);
+      font-weight: 400;
+      line-height: 0.92;
+      color: #e8e2cc;
+      letter-spacing: -0.02em;
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title span {
+      display: block;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.45em;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-rule {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-rule::before {
+      content: '';
+      display: block;
+      width: clamp(4rem, 12vw, 8rem);
+      height: 1px;
+      background: var(--accent);
+    }
+
+    .hero-sub {
+      max-width: 52ch;
+      font-size: 1.05rem;
+      color: var(--body);
+      position: relative;
+      font-style: italic;
+      font-family: var(--serif);
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 6vw, 3rem);
+    }
+
+    /* ── SECTION ── */
+    section {
+      padding: 4rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-of-type {
+      border-bottom: none;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding-top: 0.15em;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 400;
+      color: #ddd8c0;
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    h3:first-child {
+      margin-top: 0;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ── CYCLE GRID ── */
+    .cycle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 1.5rem;
+    }
+
+    .cycle-card {
+      background: var(--paper);
+      padding: 1.5rem;
+    }
+
+    .cycle-card .icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+      display: block;
+      opacity: 0.7;
+    }
+
+    .cycle-card h3 {
+      margin-top: 0;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+    }
+
+    /* ── ZONE CARDS ── */
+    .zone {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      margin-bottom: 1px;
+      position: relative;
+    }
+
+    .zone-tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+
+    .zone h2 {
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .zone.danger-high {
+      border-left: 3px solid var(--red);
+    }
+
+    .zone.danger-high .zone-tag {
+      color: var(--red-glow);
+    }
+
+    .zone.unknown {
+      border-left: 3px solid var(--dim);
+      opacity: 0.88;
+    }
+
+    /* ── QUOTE ── */
+    blockquote {
+      border-left: 2px solid var(--accent);
+      margin: 1.5rem 0;
+      padding: 0.6rem 0 0.6rem 1.4rem;
+      font-family: var(--serif);
+      font-style: italic;
+      color: #c8c4ae;
+      font-size: 1.0rem;
+      line-height: 1.7;
+    }
+
+    blockquote footer {
+      display: block;
+      margin-top: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-style: normal;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    /* ── WARDEN SECTION ── */
+    .warden-section {
+      background: #0c0808;
+      border: 1px solid #2a1515;
+      padding: 2.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .warden-designation {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      color: var(--red);
+      margin-bottom: 0.3rem;
+      word-break: break-all;
+    }
+
+    .warden-name {
+      font-family: var(--serif);
+      font-size: 1.7rem;
+      color: #ddd0b8;
+      margin-bottom: 0.3rem;
+    }
+
+    .warden-alias {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--dim);
+      letter-spacing: 0.15em;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+    }
+
+    /* ── WARNING BOX ── */
+    .warning {
+      background: #160a0a;
+      border: 1px solid #3a1515;
+      padding: 1rem 1.2rem;
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      font-size: 0.88rem;
+    }
+
+    .warning::before {
+      content: '⚠';
+      color: var(--red-glow);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      padding-top: 0.1rem;
+    }
+
+    /* ── INFO ROW ── */
+    .info-row {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .info-row:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .info-item dt {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    .info-item dd {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-family: var(--sans);
+      font-weight: 400;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 580px) {
+      .cycle-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .info-row {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+
+    <div class="warden-pulse">
+      <div class="dot"></div>
+      Warden ativo
+    </div>
+
+    <p class="hero-eyebrow">Arquivo M.E.G · Classificação: Extremo Risco</p>
+    <h1 class="hero-title">
+      Nível −7
+      <span>As Ruínas</span>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">
+      Furtividade. Percepção. Silêncio absoluto.
+      O barulho que você faz decide quanto tempo você vive.
+    </p>
+  </header>
+
+  <!-- OVERVIEW -->
+  <div class="container">
+    <section>
+      <div class="section-header">
+        <span class="section-label">Visão Geral</span>
+        <h2>Uma cidade que pertenceu a outro universo</h2>
+      </div>
+
+      <dl class="info-row">
+        <div class="info-item">
+          <dt>Ciclo diário</dt>
+          <dd>14 horas</dd>
+        </div>
+        <div class="info-item">
+          <dt>Dificuldade</dt>
+          <dd>Extrema</dd>
+        </div>
+        <div class="info-item">
+          <dt>Sobrevivência média</dt>
+          <dd>~2 semanas</dd>
+        </div>
+        <div class="info-item">
+          <dt>Entidade principal</dt>
+          <dd>Warden</dd>
+        </div>
+      </dl>
+
+      <p style="margin-top: 1.5rem;">O ambiente se assemelha às ruínas de uma cidade que pertenceu a outro universo.
+        Anos atrás, antes de entrar em colapso, essa cidade foi invadida por uma nova vida atraída pelo som.
+        Inicialmente pacíficos, esses seres tornaram-se brutalmente agressivos, forçando a população original a
+        construir bunkers antes de serem extintos.</p>
+
+      <p>Hoje, o nível é governado por uma regra absoluta: quanto mais barulho você faz, maiores as chances de ser
+        encontrado.</p>
+
+      <!-- CICLOS -->
+      <div class="cycle-grid">
+        <div class="cycle-card">
+          <span class="icon">☀</span>
+          <h3>Dia — 7 horas</h3>
+          <p>Iluminação solar normal ou céu encoberto. O Warden mantém postura ativa/passiva — não caça ativamente, mas
+            atacará qualquer fonte de som sem hesitar.</p>
+        </div>
+        <div class="cycle-card">
+          <span class="icon">◼</span>
+          <h3>Noite — 7 horas</h3>
+          <p>Escuridão total. Apenas alguns postes no centro. O Warden entra em modo predador e faz rondas ao redor da
+            floresta — indo ao centro somente por barulho massivo.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENTRADAS E SAÍDAS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Acesso</span>
+        <h2>Entradas e Saídas</h2>
+      </div>
+
+      <h3>Entrada</h3>
+      <p>A forma mais conhecida de acessar o Nível -7 é através da casa da Kitty (Nível 974). Ao entrar em um dos
+        armários e empurrar a parede do fundo, o explorador fará noclip e cairá em uma região aleatória. O transporte
+        evita zonas de perigo extremo — nenhuma queda direta na Zona da Morte.</p>
+
+      <h3>Saída</h3>
+      <p>A Zona Oeste é a região mais associada a possíveis saídas. Alguns relatam escapar através de prédios
+        abandonados, mas as passagens são instáveis. Segundo dados da M.E.G, a média de sobrevivência ininterrupta antes
+        que saídas comecem a aparecer é de aproximadamente <strong style="color: var(--accent); font-weight:600;">duas
+          semanas</strong>.</p>
+    </section>
+
+    <!-- ZONAS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Mapeamento</span>
+        <h2>Regiões — Zonas</h2>
+      </div>
+
+      <div class="zone">
+        <span class="zone-tag">Zona Leste</span>
+        <h2>Zona Morta</h2>
+        <p>A área mais "segura" do nível. Contém os antigos bunkers construídos pela civilização original, com recursos
+          vitais como água de amêndoa e alimentos. Porém, quem permanece tempo demais ou explora profundamente encontra
+          algo pior que o Warden.</p>
+        <p>Sobreviventes descrevem a presença como <em>"a Sombra"</em> — e relatam que ela não fica para trás quando
+          saem do nível. Registros da M.E.G indicam efeitos psicológicos que persistem por meses, possivelmente anos. A
+          maioria dos pacientes acompanhados enlouquece, perece em surtos dissociativos ou tira a própria vida. Em todos
+          os casos, o relato
+          final menciona a mesma coisa:</p>
+        <div class="warning">A Sombra ainda está lá.</div>
+      </div>
+
+      <div class="zone danger-high">
+        <span class="zone-tag">Zona Sul · Perigo máximo</span>
+        <h2>Zona da Morte</h2>
+        <p>Uma antiga fábrica de vidro cercada por floresta escura. Local com a maior concentração de recursos úteis — e
+          o mais letal. O chão é forrado de vidro quebrado, metais retorcidos e vegetação seca.</p>
+        <p>É impossível não fazer barulho. Se o Warden for atraído aqui, o desconforto dos detritos o deixará em fúria
+          cega. Sobrevivência: quase nula.</p>
+      </div>
+
+      <div class="zone danger-high">
+        <span class="zone-tag">Zona Norte · Inexplorada</span>
+        <h2>A Redoma</h2>
+        <p>Uma enorme névoa densa que bloqueia qualquer visão do interior. Testes sonoros indicam que o Warden costuma
+          emergir dessa direção. Até hoje, nenhum agente da M.E.G adentrou a Redoma.</p>
+
+        <blockquote>
+          "Eu vi o Marcos tomar uma pancada nas costas. Ele estava a três metros de mim. O som que fez quando caiu… eu
+          nunca mais quis saber o que tem dentro daquela névoa. Ninguém que viu isso de perto vai querer entrar lá. Isso
+          não é covardia. É a única coisa sensata que dá pra fazer."
+          <footer>— Agente Corvo · Relatório de Campo #31-C</footer>
+        </blockquote>
+
+        <p>O clima extremo da região — chuvas fortes, ventos constantes e anomalias de temperatura — torna qualquer
+          aproximação arriscada por si só. O que existe no centro da névoa permanece desconhecido.</p>
+      </div>
+
+      <div class="zone unknown">
+        <span class="zone-tag">??? · Anômala</span>
+        <h2>A Vizinhança</h2>
+        <p>Um subúrbio silencioso com casas artificiais e perfeitamente limpas. O acesso parece completamente aleatório
+          — nenhum sobrevivente consegue explicar como chegou lá.</p>
+        <p>Nenhum agente da M.E.G confirmou pessoalmente ter pisado na Vizinhança. Amigos de membros ativos relatam já
+          ter estado lá — mas quando tentaram retornar para documentar, a área simplesmente não estava mais lá.</p>
+        <p style="color: var(--dim); font-style: italic; font-family: var(--serif);">A Vizinhança não pode ser
+          encontrada. Ela é que te encontra — e aparentemente, só uma vez.</p>
+      </div>
+    </section>
+
+    <!-- WARDEN -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Entidade Principal</span>
+        <h2>Ficha de Ameaça</h2>
+      </div>
+
+      <div class="warden-section">
+        <p class="warden-designation">Designação Oficial: €=^£=€[¥×§`</p>
+        <p class="warden-name">Warden</p>
+        <p class="warden-alias">"Aquele que lhe escuta mesmo no silêncio"</p>
+
+        <h3>Aparência</h3>
+        <p>Mistério absoluto. As vítimas que o viram de perto não viveram para relatar. Sabe-se apenas que possui
+          braços/patas dianteiras semelhantes à anatomia humana — com força suficiente para revirar blocos de concreto e
+          destroços pesados.</p>
+
+        <h3>Comportamento</h3>
+        <p>O Warden é <strong style="color:#ddd0b8; font-weight:600;">completamente cego</strong>. Guia-se puramente por
+          som. Sua presença é precedida por silêncio anormal, queda brusca de temperatura e estática semelhante a rádio
+          sem sinal.</p>
+
+        <h3>Ataque</h3>
+        <p>Se confirmar a origem de um barulho — especialmente na Zona da Morte — ele não apenas ataca: usa força bruta
+          para desferir golpes devastadores. Um único golpe em área sensível pode causar paralisia parcial ou morte
+          instantânea. O impacto cinético é suficiente para deixar o sobrevivente indefeso e agonizando.</p>
+
+        <div class="warning">
+          Muito cuidado com o barulho que você faz durante a exploração.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    M.E.G — Arquivos de Campo &nbsp;·&nbsp; Nível −7 &nbsp;·&nbsp; Acesso Restrito
+  </footer>
+
+</body>
+
+</html>
