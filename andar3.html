@@ -829,66 +829,6 @@
     window.dispatchEvent(new Event('scroll'));
   </script>
 
-  <!-- ══════════════════════════════════════
-       PAINEL DE TESTES — REMOVA ANTES DE PUBLICAR
-  ══════════════════════════════════════ -->
-  <div id="dev-panel" style="
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    background: #000;
-    border: 1px solid #2a4a1a;
-    padding: 1rem 1.2rem;
-    z-index: 999998;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    min-width: 180px;
-  ">
-    <span style="color:#3a5a2a; text-transform:uppercase; letter-spacing:0.2em;">Dev · Testes</span>
-
-    <button onclick="testEvent()" style="
-      background: #0a120a;
-      border: 1px solid #3a6a2a;
-      color: #7aaa5a;
-      padding: 0.5rem 1rem;
-      font-family: inherit;
-      font-size: inherit;
-      letter-spacing: inherit;
-      cursor: pointer;
-      text-transform: uppercase;
-    ">▶ Ativação</button>
-
-    <button onclick="testSecondVisit()" style="
-      background: #0a120a;
-      border: 1px solid #2a4a1a;
-      color: #4a7a3a;
-      padding: 0.5rem 1rem;
-      font-family: inherit;
-      font-size: inherit;
-      letter-spacing: inherit;
-      cursor: pointer;
-      text-transform: uppercase;
-    ">▶ 2ª visita (viu)</button>
-
-    <button onclick="resetAll()" style="
-      background: #0a0a0a;
-      border: 1px solid #333;
-      color: #555;
-      padding: 0.5rem 1rem;
-      font-family: inherit;
-      font-size: inherit;
-      letter-spacing: inherit;
-      cursor: pointer;
-      text-transform: uppercase;
-    ">✕ Resetar tudo</button>
-
-    <span id="dev-status" style="color:#2a4a2a; font-size:0.6rem; min-height:1em;"></span>
-  </div>
-
   <script>
     // ── DRIPS DECORATIVOS ──
     const dripContainer = document.getElementById('drips');
@@ -1108,34 +1048,6 @@
       });
     }
 
-    // ── FUNÇÕES DE TESTE (remova antes de publicar) ──
-    function setStatus(msg) {
-      const el = document.getElementById('dev-status');
-      if (el) { el.textContent = msg; setTimeout(() => { el.textContent = ''; }, 3000); }
-    }
-
-    function testEvent() {
-      setStatus('disparando evento...');
-      triggerEvent();
-    }
-
-    function testSecondVisit() {
-      saveState({ visitou: true, viu: true, secreto: false });
-      setStatus('salvo · recarregue a página');
-    }
-
-    function resetAll() {
-      localStorage.removeItem(STORAGE_KEY);
-      // fecha qualquer overlay aberto
-      document.getElementById('overlay-event').classList.remove('active');
-      document.getElementById('second-visit-screen').classList.remove('active');
-      document.getElementById('overlay-event').style.opacity = '';
-      document.getElementById('overlay-event').style.transition = '';
-      document.getElementById('second-visit-screen').style.opacity = '';
-      document.body.style.overflow = '';
-      document.title = 'Andar 3 — "Remains"';
-      setStatus('resetado · recarregue a página');
-    }
 
     function triggerEvent() {
       // Marca viu=true mas secreto só é salvo quando a segunda visita de fato ocorrer
