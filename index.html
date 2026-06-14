@@ -4,11 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Mensagem — M.E.G</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c8a96e'>◬</text></svg>">
+    <title>◬ A Mensagem — M.E.G</title>
     <!-- Using Inter for a clean, Apple-like sans-serif, and Playfair Display for elegant serif -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
         rel="stylesheet">
@@ -116,8 +118,17 @@
         }
 
         @keyframes pulse-green {
-            0%, 100% { opacity: 1; box-shadow: 0 0 6px #4ade80; }
-            50%       { opacity: 0.3; box-shadow: none; }
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 6px #4ade80;
+            }
+
+            50% {
+                opacity: 0.3;
+                box-shadow: none;
+            }
         }
 
         .nav-cta {

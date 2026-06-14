@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%235a8a4a'>👁️</text></svg>">
+  <title>👁️ Andar 3 — "Remains"</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
+
+    :root {
+      --bg: #060806;
+      --paper: #0a0d0a;
+      --muted: #0e120e;
+      --border: #1a2a1a;
+      --dim: #2a4a2a;
+      --body: #8aaa7a;
+      --accent: #5a8a4a;
+      --accent-light: #7aaa5a;
+      --rot: #3a5a2a;
+      --white: #d0e8c0;
+      --danger: #4a7a3a;
+      --mono: 'Share Tech Mono', monospace;
+      --serif: 'IM Fell English', serif;
+      --sans: 'Barlow Condensed', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* grain orgânico pesado */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.07;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(3rem, 8vh, 5rem);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 40%, rgba(30,60,20,0.4) 0%, transparent 70%),
+        radial-gradient(ellipse 80% 60% at 20% 80%, rgba(10,25,10,0.6) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .status-indicator {
+      position: absolute;
+      top: clamp(1.5rem, 4vh, 3rem);
+      right: clamp(1.5rem, 4vw, 3rem);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--rot);
+      text-transform: uppercase;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(3.8rem, 10vw, 8rem);
+      font-weight: 400;
+      line-height: 0.92;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero-title span {
+      display: block;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.45em;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-rule::before {
+      content: '';
+      display: block;
+      width: clamp(4rem, 12vw, 8rem);
+      height: 1px;
+      background: var(--rot);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-sub {
+      max-width: 52ch;
+      font-size: 1.05rem;
+      color: var(--body);
+      font-style: italic;
+      font-family: var(--serif);
+    }
+
+    /* drip no topo da hero */
+    .drip-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .drip {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--rot), transparent);
+      animation: drip-fall linear infinite;
+      opacity: 0.4;
+    }
+
+    @keyframes drip-fall {
+      0% { height: 0; top: -20px; opacity: 0; }
+      20% { opacity: 0.4; }
+      80% { opacity: 0.2; }
+      100% { height: 60px; top: 0; opacity: 0; }
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 6vw, 3rem);
+    }
+
+    section {
+      padding: 4rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-of-type { border-bottom: none; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 400;
+      color: var(--accent-light);
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    h3:first-child { margin-top: 0; }
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── INFO ROW ── */
+    .info-row {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .info-item { display: flex; flex-direction: column; gap: 0.2rem; }
+
+    .info-item dt {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    .info-item dd {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-family: var(--sans);
+    }
+
+    /* ── DOC / DIÁRIO ── */
+    .doc {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      margin: 1.5rem 0;
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      line-height: 1.8;
+      position: relative;
+    }
+
+    /* efeito de tinta espalhada no doc final */
+    .doc.stained {
+      background: #080c08;
+      border-color: #1a2a1a;
+    }
+
+    .doc.stained::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      pointer-events: none;
+    }
+
+    .doc-header {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .doc p { margin-bottom: 0.8rem; }
+    .doc p:last-child { margin-bottom: 0; }
+
+    /* texto de repetição obsessiva */
+    .obsessive {
+      font-family: var(--serif);
+      font-style: italic;
+      line-height: 2;
+      opacity: 0.9;
+    }
+
+    .obsessive span {
+      display: block;
+      transition: opacity 0.3s;
+    }
+
+    .obsessive span:nth-child(2) { opacity: 0.75; padding-left: 1rem; }
+    .obsessive span:nth-child(3) { opacity: 0.55; padding-left: 2rem; }
+    .obsessive span:nth-child(4) { opacity: 0.35; padding-left: 3rem; }
+    .obsessive span:nth-child(5) { opacity: 0.15; padding-left: 4rem; font-size: 0.9em; }
+
+    /* ── ZONE ── */
+    .zone {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      margin-bottom: 1px;
+      position: relative;
+    }
+
+    .zone-tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dim);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    .zone.danger {
+      border-color: #2a4a1a;
+      background: #080d08;
+    }
+
+    /* ── AVISO ── */
+    .warning {
+      background: #0a100a;
+      border: 1px solid #2a4a1a;
+      padding: 1rem 1.2rem;
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      font-size: 0.88rem;
+    }
+
+    .warning::before {
+      content: '▲';
+      color: var(--accent);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      padding-top: 0.1rem;
+    }
+
+    /* ── CITAÇÃO FINAL ── */
+    .final-quote {
+      border-left: 2px solid var(--rot);
+      padding: 1rem 1.5rem;
+      margin: 2rem 0;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--accent-light);
+      line-height: 1.7;
+    }
+
+    /* ── NAV ANDARES ── */
+    .floor-nav {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .floor-btn {
+      flex: 1;
+      background: var(--paper);
+      padding: 1rem;
+      text-align: center;
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      transition: background 0.2s, color 0.2s;
+      display: block;
+    }
+
+    .floor-btn.active {
+      background: var(--muted);
+      color: var(--accent-light);
+    }
+
+    .floor-btn:hover:not(.active) {
+      background: var(--muted);
+      color: var(--accent);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ═══════════════════════════════════════
+       OVERLAY — EVENTO 25% (primeira visita)
+    ═══════════════════════════════════════ */
+    #overlay-event {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      cursor: none;
+    }
+
+    #overlay-event.active { display: flex; }
+
+    #overlay-text {
+      font-family: var(--serif);
+      font-size: clamp(1.2rem, 4vw, 2.2rem);
+      color: #c0d8a0;
+      text-align: center;
+      opacity: 0;
+      line-height: 1.6;
+      max-width: 600px;
+      padding: 2rem;
+      transition: opacity 2s ease;
+    }
+
+    #overlay-text.visible { opacity: 1; }
+
+    #overlay-sub {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: #3a5a2a;
+      text-align: center;
+      opacity: 0;
+      margin-top: 2rem;
+      transition: opacity 1.5s ease;
+      text-transform: uppercase;
+    }
+
+    #overlay-sub.visible { opacity: 1; }
+
+    /* ═══════════════════════════════════════
+       TELA PRETA — SEGUNDA VISITA (viu o evento)
+    ═══════════════════════════════════════ */
+    #second-visit-screen {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 99999;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    #second-visit-screen.active { display: block; }
+
+    /* mensagem central grande */
+    #sv-main {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 5vw, 3.5rem);
+      color: #a0c080;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 2.5s ease;
+      white-space: nowrap;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    #sv-main.visible { opacity: 1; }
+
+    /* animação de tremor nas palavras fantasma */
+    @keyframes ghost-shake {
+      0%   { transform: var(--ghost-base-rotate) translate(0, 0); }
+      10%  { transform: var(--ghost-base-rotate) translate(-1.5px, 1px); }
+      20%  { transform: var(--ghost-base-rotate) translate(1px, -1.5px); }
+      30%  { transform: var(--ghost-base-rotate) translate(-1px, 0.5px); }
+      40%  { transform: var(--ghost-base-rotate) translate(1.5px, 1px); }
+      50%  { transform: var(--ghost-base-rotate) translate(-0.5px, -1px); }
+      60%  { transform: var(--ghost-base-rotate) translate(1px, 1.5px); }
+      70%  { transform: var(--ghost-base-rotate) translate(-1.5px, -0.5px); }
+      80%  { transform: var(--ghost-base-rotate) translate(0.5px, 1px); }
+      90%  { transform: var(--ghost-base-rotate) translate(-1px, -1px); }
+      100% { transform: var(--ghost-base-rotate) translate(0, 0); }
+    }
+
+    /* cópias menores que vão cobrir a tela */
+    .sv-ghost {
+      position: absolute;
+      font-family: var(--serif);
+      color: #5a8a4a;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      white-space: nowrap;
+      z-index: 1;
+      --ghost-base-rotate: rotate(0deg);
+    }
+
+    .sv-ghost.visible {
+      opacity: 1;
+      animation: ghost-shake var(--ghost-shake-speed, 0.35s) infinite ease-in-out;
+    }
+
+    /* fade final para preto */
+    #sv-blackout {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      opacity: 0;
+      transition: opacity 3s ease;
+      z-index: 3;
+    }
+
+    #sv-blackout.active { opacity: 1; }
+
+    /* ═══════════════════════════════════════
+       ANOMALIA SUTIL — SEGUNDA VISITA (não viu)
+    ═══════════════════════════════════════ */
+    #subtle-anomaly {
+      display: none;
+      text-align: center;
+      padding: 1rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      color: #1a2a1a;
+      margin-top: 1rem;
+    }
+
+    .btn-next-level {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--paper);
+      color: var(--accent-light);
+      padding: 1rem 1.8rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-bottom: 2px solid var(--rot);
+      z-index: 9999999;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.9);
+    }
+    .btn-next-level.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .btn-next-level:hover {
+      background: var(--bg);
+      border-color: var(--rot);
+      color: var(--white);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 580px) {
+      .info-row { flex-direction: column; gap: 0.8rem; }
+      .floor-nav { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- OVERLAY EVENTO 25% -->
+  <div id="overlay-event">
+    <div id="overlay-text"></div>
+    <div id="overlay-sub"></div>
+  </div>
+
+  <!-- TELA SEGUNDA VISITA (quem viu) -->
+  <div id="second-visit-screen">
+    <div id="sv-main">Você sabe demais..</div>
+    <div id="sv-blackout"></div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+
+    <div class="drip-container" id="drips"></div>
+
+    <div class="status-indicator">
+      relatorio classificado · alto secreto
+    </div>
+
+    <p class="hero-eyebrow">Arquivo M.E.G · Alto Secreto · 1 sobrevivente de 4</p>
+    <h1 class="hero-title">
+      Andar 3
+      <span>"Remains"</span>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">
+      O cheiro não sai.<br>
+      O cheiro não sai.<br>
+      O cheiro não sai.
+    </p>
+  </header>
+
+  <div class="container">
+
+    <!-- NAV -->
+    <div class="floor-nav" style="margin-top:2.5rem;">
+      <a href="andar1.html" class="floor-btn">Andar 1 — Lobby</a>
+      <a href="andar2.html" class="floor-btn">Andar 2 — Depths</a>
+      <a href="andar3.html" class="floor-btn active">Andar 3 — Remains</a>
+    </div>
+
+    <!-- VISÃO GERAL -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Visão Geral</span>
+        <h2>A região mais perturbadora já documentada</h2>
+      </div>
+
+      <dl class="info-row">
+        <div class="info-item">
+          <dt>Status da equipe</dt>
+          <dd>1 retornou / 3 não</dd>
+        </div>
+        <div class="info-item">
+          <dt>Odor</dt>
+          <dd>Insuportável · persiste dias</dd>
+        </div>
+        <div class="info-item">
+          <dt>Agente sobrevivente</dt>
+          <dd>009-R-04 · Internado</dd>
+        </div>
+        <div class="info-item">
+          <dt>Efeitos psicológicos</dt>
+          <dd>Extremos · progressivos</dd>
+        </div>
+      </dl>
+
+      <p style="margin-top:1.5rem;">O Terceiro Andar apresenta odor insuportável, sujeira orgânica, líquidos desconhecidos e uma atmosfera que, segundo todos os agentes que retornaram, "pesa sobre os pulmões".</p>
+
+      <div class="doc">
+        <div class="doc-header">📄 Relatório Oficial M.E.G — Expedição #009-R · Alto Secreto · Status: 1 confirmado morto, 2 desaparecidos, 1 retornou</div>
+        <p>O agente 009-R-04 foi o único membro da equipe a retornar do Terceiro Andar.</p>
+        <p>Durante a entrevista de debriefing, o agente repetiu a mesma frase por aproximadamente 40 minutos antes de responder qualquer pergunta:</p>
+        <div class="obsessive">
+          <span>"O cheiro não sai."</span>
+          <span>"O cheiro não sai."</span>
+          <span>"O cheiro não sai."</span>
+          <span>"O cheiro não sai."</span>
+          <span>"O cheiro não sai."</span>
+        </div>
+        <p style="margin-top:1rem; color:var(--dim); font-style:italic;">O relato completo encontra-se nos arquivos restritos. Esta página contém apenas o resumo autorizado para publicação.</p>
+      </div>
+    </section>
+
+    <!-- SALA 1 -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Sala 1</span>
+        <h2>Restos Orgânicos</h2>
+      </div>
+
+      <div class="zone danger">
+        <span class="zone-tag">Conteúdo perturbador · leitura opcional</span>
+        <p>A sala contém enormes quantidades de carne apodrecida, órgãos, restos biológicos e estruturas irreconhecíveis. A equipe abandonou rapidamente a exploração devido ao cheiro extremo.</p>
+        <p>Nenhuma fotografia foi tirada. O agente responsável pela câmera recusou-se a registrar.</p>
+      </div>
+    </section>
+
+    <!-- SALA 2 -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Sala 2</span>
+        <h2>O Morador e os Manequins</h2>
+      </div>
+
+      <p>Durante a exploração, agentes encontraram um dos moradores coberto de sangue ao lado de estruturas semelhantes a manequins desmontados. Os objetos estavam separados em partes — pernas, cabeça, braços, torso.</p>
+
+      <div class="warning">
+        Os agentes suspeitam fortemente que não eram manequins reais. Nenhum som foi feito durante a retirada da equipe.
+      </div>
+
+      <div class="doc" style="margin-top:1.5rem;">
+        <div class="doc-header">📋 Diário Pessoal — Agente K. Moraes · Entrada #?? · Numeração riscada · Data ilegível</div>
+        <p>nao consigo parar de pensar no que vi</p>
+        <p>o morador tava sorrindo</p>
+        <p>tava sorrindo do mesmo jeito que sorriu quando jogamos videogame</p>
+        <div class="obsessive" style="font-size:0.9em;">
+          <span>do mesmo jeito</span>
+          <span>do mesmo jeito</span>
+          <span>exatamente do mesmo jeito</span>
+          <span>eu acho que sempre foi assim</span>
+          <span>eu acho que sempre foi assim e eu nao percebi</span>
+        </div>
+        <p style="margin-top:1rem;">o primeiro andar</p>
+        <p>o primeiro andar era</p>
+      </div>
+
+      <div class="doc stained">
+        <div class="doc-header">continuação — tinta espalhada · ilegível</div>
+        <p style="opacity:0.3; font-style:italic;">[o restante da página está ilegível — a tinta foi espalhada, possivelmente por água ou por uma mão molhada passada sobre o texto]</p>
+      </div>
+    </section>
+
+    <!-- SALA 3 FINAL -->
+    <section id="final-section">
+      <div class="section-header">
+        <span class="section-label">Sala 3 · Final</span>
+        <h2>O que a equipe encontrou</h2>
+      </div>
+
+      <p>A sala final continha inúmeros cadáveres mutilados em estados avançados de decomposição. Entre eles, o corpo de um soldado da própria M.E.G segurando uma fotografia de sua família.</p>
+      <p>Próximo ao corpo, um dos moradores serrava lentamente a perna do agente como se estivesse preparando carne comum.</p>
+
+      <div class="final-quote" id="final-quote">
+        "Percebemos que nada que é bonito por fora é realmente bonito por dentro."
+        <br><span style="font-size:0.75em; font-style:normal; font-family:var(--mono); letter-spacing:0.1em; color:var(--dim);">— Relatório final da expedição #009-R</span>
+      </div>
+
+      <!-- anomalia sutil para quem voltou sem ter visto o evento -->
+      <div id="subtle-anomaly">
+        <p>°¢{€} nós lembramos de você</p>
+      </div>
+    </section>
+
+    <!-- EFEITOS PSICOLÓGICOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Relatório Psicológico</span>
+        <h2>Efeitos do Terceiro Andar</h2>
+      </div>
+
+      <p>Os efeitos psicológicos atingem níveis extremos neste andar. Diferente dos andares superiores, os sintomas aqui são imediatos e pioram progressivamente quanto maior for a permanência.</p>
+
+      <div class="zone danger">
+        <span class="zone-tag">Sintomas documentados · progressivos</span>
+        <p>Náusea intensa, vontade constante de vomitar, pensamentos suicidas, desespero profundo, instabilidade mental severa e angústia existencial que os agentes descrevem como "impossível de nomear".</p>
+        <p>Nenhum agente que permaneceu por mais de 40 minutos no Terceiro Andar retornou sem sequelas psicológicas permanentes.</p>
+      </div>
+
+      <div class="warning" style="margin-top:1rem;">
+        O único sobrevivente da expedição #009-R — o agente 009-R-04 — permaneceu internado por tempo indeterminado após o retorno. Seus registros de debriefing encontram-se classificados como Alto Secreto e não estão disponíveis para publicação.
+      </div>
+    </section>
+
+    <!-- FENÔMENOS ESTRANHOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Fenômenos Documentados</span>
+        <h2>O que este andar faz com o ambiente</h2>
+      </div>
+
+      <p>Ao contrário dos andares superiores, o Terceiro Andar parece se deteriorar sozinho. Nada é corrigido. Nada é organizado. O ambiente se desfaz lentamente sem que ninguém interfira.</p>
+
+      <div class="zone danger" style="margin-bottom:1px;">
+        <span class="zone-tag">Fenômeno · Odor persistente</span>
+        <p>O cheiro pútrido característico do Terceiro Andar não some com o retorno aos andares superiores. Ele gruda nas roupas, no cabelo e aparentemente na memória. Diversos agentes relataram continuar sentindo o odor dias — e em alguns casos semanas — após deixarem o nível completamente.</p>
+        <p>Não existe explicação documentada para este fenômeno.</p>
+      </div>
+
+      <div class="zone danger">
+        <span class="zone-tag">Fenômeno · Deterioração espontânea</span>
+        <p>Objetos deixados no Terceiro Andar apodrecem em velocidade anômala. Alimentos que duram dias nos andares superiores tornam-se impróprios em horas. Papéis amarelecem. Metais enferrujem. O próprio ar parece consumir o que quer que esteja exposto a ele.</p>
+      </div>
+    </section>
+
+    <!-- TEMA CENTRAL -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Conclusão</span>
+        <h2>O que o Nível -9 representa</h2>
+      </div>
+
+      <p>O Nível -9 não é apenas um lugar. É uma estrutura que existe para demonstrar algo.</p>
+
+      <div class="final-quote">
+        perfeição artificial e conforto perigoso.
+        <br><span style="font-size:0.75em; font-style:normal; font-family:var(--mono); letter-spacing:0.1em; color:var(--dim);">— Tema central documentado pela M.E.G</span>
+      </div>
+
+      <p>O nível cria uma falsa sensação de acolhimento no Primeiro Andar. Os moradores sorriem. O ambiente cheira bem. Tudo parece seguro, limpo e perfeito.</p>
+      <p>Mas sob isso existe o Segundo Andar — ansiedade, paranoia, o formato do seu próprio corpo impresso num colchão que nunca foi seu.</p>
+      <p>E sob o Segundo Andar existe o Terceiro. A podridão real. O que os moradores fazem quando ninguém deveria estar olhando.</p>
+      <p>O nível não esconde o que é. Ele apenas coloca camadas bonitas por cima e espera que você não desça.</p>
+      <p>A maioria não desce.</p>
+      <p>Alguns descem e voltam.</p>
+
+      <div class="doc" style="margin-top:2rem; border-color:#2a4a1a;">
+        <div class="doc-header">nota final · autoria desconhecida · encontrada fixada na parede da Sala 3</div>
+        <p>se você chegou até aqui você já entendeu.</p>
+        <p>o sorriso que eles têm no lobby é o mesmo que têm aqui.</p>
+        <p>sempre foi o mesmo sorriso.</p>
+        <p style="color:var(--dim); font-style:italic; margin-top:1rem;">— [ilegível]</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    M.E.G — Arquivos de Campo &nbsp;·&nbsp; Nível −9 · Andar 3 &nbsp;·&nbsp; Alto Secreto
+  </footer>
+
+  <a href="#" class="btn-next-level">em Trabalho do proximo nivel</a>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      const btn = document.querySelector('.btn-next-level');
+      if (btn) {
+        const pct = (window.innerHeight + window.scrollY) / document.body.offsetHeight;
+        if (pct >= 0.85 || document.body.offsetHeight <= window.innerHeight) {
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
+      }
+    });
+    window.dispatchEvent(new Event('scroll'));
+  </script>
+
+  <!-- ══════════════════════════════════════
+       PAINEL DE TESTES — REMOVA ANTES DE PUBLICAR
+  ══════════════════════════════════════ -->
+  <div id="dev-panel" style="
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: #000;
+    border: 1px solid #2a4a1a;
+    padding: 1rem 1.2rem;
+    z-index: 999998;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 180px;
+  ">
+    <span style="color:#3a5a2a; text-transform:uppercase; letter-spacing:0.2em;">Dev · Testes</span>
+
+    <button onclick="testEvent()" style="
+      background: #0a120a;
+      border: 1px solid #3a6a2a;
+      color: #7aaa5a;
+      padding: 0.5rem 1rem;
+      font-family: inherit;
+      font-size: inherit;
+      letter-spacing: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+    ">▶ Ativação</button>
+
+    <button onclick="testSecondVisit()" style="
+      background: #0a120a;
+      border: 1px solid #2a4a1a;
+      color: #4a7a3a;
+      padding: 0.5rem 1rem;
+      font-family: inherit;
+      font-size: inherit;
+      letter-spacing: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+    ">▶ 2ª visita (viu)</button>
+
+    <button onclick="resetAll()" style="
+      background: #0a0a0a;
+      border: 1px solid #333;
+      color: #555;
+      padding: 0.5rem 1rem;
+      font-family: inherit;
+      font-size: inherit;
+      letter-spacing: inherit;
+      cursor: pointer;
+      text-transform: uppercase;
+    ">✕ Resetar tudo</button>
+
+    <span id="dev-status" style="color:#2a4a2a; font-size:0.6rem; min-height:1em;"></span>
+  </div>
+
+  <script>
+    // ── DRIPS DECORATIVOS ──
+    const dripContainer = document.getElementById('drips');
+    for (let i = 0; i < 8; i++) {
+      const d = document.createElement('div');
+      d.className = 'drip';
+      d.style.left = (Math.random() * 100) + '%';
+      d.style.animationDuration = (3 + Math.random() * 5) + 's';
+      d.style.animationDelay = (Math.random() * 4) + 's';
+      d.style.height = (20 + Math.random() * 40) + 'px';
+      dripContainer.appendChild(d);
+    }
+
+    // ── WEB AUDIO — SUSSURRO SINTÉTICO ──
+    function createWhisperAudio() {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+      // ruído branco
+      const bufferSize = ctx.sampleRate * 4;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1);
+      }
+
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      // filtro passa-banda que simula voz sussurrada
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.value = 1800;
+      bandpass.Q.value = 0.8;
+
+      // filtro de presença vocal
+      const presence = ctx.createBiquadFilter();
+      presence.type = 'peaking';
+      presence.frequency.value = 3000;
+      presence.gain.value = 8;
+
+      // oscilação lenta (modulação de amplitude)
+      const lfo = ctx.createOscillator();
+      lfo.frequency.value = 0.3;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 0.4;
+      lfo.connect(lfoGain);
+
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = 0;
+
+      noise.connect(bandpass);
+      bandpass.connect(presence);
+      presence.connect(masterGain);
+      masterGain.connect(ctx.destination);
+
+      noise.start();
+      lfo.start();
+
+      return {
+        fadeIn(duration = 3) {
+          masterGain.gain.setValueAtTime(0, ctx.currentTime);
+          masterGain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + duration);
+        },
+        fadeOut(duration = 2) {
+          masterGain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
+          setTimeout(() => {
+            try { noise.stop(); ctx.close(); } catch(e) {}
+          }, duration * 1000 + 100);
+        }
+      };
+    }
+
+    // ── SISTEMA DE VISITAS ──
+    const STORAGE_KEY = 'nivel9_andar3';
+
+    function loadState() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || { visitou: false, viu: false, secreto: false };
+      } catch(e) {
+        return { visitou: false, viu: false, secreto: false };
+      }
+    }
+
+    function saveState(obj) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch(e) {}
+    }
+
+    const state = loadState();
+
+    // ── TELA SECRETA — persiste mesmo após reload ──
+    // Ativada quando: (a) segunda visita com evento visto OU (b) secreto já desbloqueado antes
+    if (state.secreto || (state.visitou && state.viu)) {
+
+      // Garante que o flag secreto esteja persistido
+      if (!state.secreto) {
+        state.secreto = true;
+        saveState(state);
+      }
+
+      const screen = document.getElementById('second-visit-screen');
+      const svMain = document.getElementById('sv-main');
+      const svBlackout = document.getElementById('sv-blackout');
+
+      // Bloqueia a página imediatamente, antes de qualquer render
+      screen.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.title = 'Você sabe demais..';
+
+      // sussurro começa imediatamente
+      const whisper = createWhisperAudio();
+      whisper.fadeIn(2);
+
+      // mensagem central aparece logo
+      setTimeout(() => {
+        svMain.classList.add('visible');
+      }, 800);
+
+      // gera cópias menores que vão cobrir toda a tela, com tremor
+      const phrase = 'Você sabe demais..';
+      const sizes = [
+        '0.55rem','0.65rem','0.5rem','0.7rem','0.45rem',
+        '0.8rem','0.6rem','0.5rem','0.75rem','0.55rem',
+        '0.9rem','0.48rem','0.62rem','0.7rem','0.52rem'
+      ];
+      const alphas = [0.9,0.7,0.5,0.8,0.6,0.4,0.75,0.55,0.85,0.45,0.65,0.5,0.7,0.6,0.8];
+      // velocidades variadas de tremor por fantasma
+      const shakeSpeeds = [
+        '0.22s','0.31s','0.18s','0.27s','0.40s',
+        '0.15s','0.35s','0.24s','0.19s','0.33s',
+        '0.28s','0.21s','0.38s','0.26s','0.17s'
+      ];
+
+      function spawnGhosts() {
+        const total = 90;
+        let spawned = 0;
+
+        function spawnOne() {
+          if (spawned >= total) return;
+
+          const ghost = document.createElement('div');
+          ghost.className = 'sv-ghost';
+          ghost.textContent = phrase;
+
+          const i = spawned % sizes.length;
+          const r = Math.floor(40 + Math.random() * 60);
+          const g = Math.floor(90 + Math.random() * 60);
+          const b = Math.floor(30 + Math.random() * 40);
+          const angle = (Math.random() - 0.5) * 30;
+
+          ghost.style.fontSize = sizes[i];
+          ghost.style.color = 'rgba(' + r + ',' + g + ',' + b + ',' + alphas[i] + ')';
+          ghost.style.left = (Math.random() * 110 - 5) + '%';
+          ghost.style.top  = (Math.random() * 110 - 5) + '%';
+          // guarda rotação base como CSS var para o keyframe usar
+          ghost.style.setProperty('--ghost-base-rotate', 'rotate(' + angle + 'deg)');
+          ghost.style.setProperty('--ghost-shake-speed', shakeSpeeds[i]);
+          ghost.style.transform = 'rotate(' + angle + 'deg)';
+
+          screen.appendChild(ghost);
+          // pequeno delay para transition de opacity funcionar corretamente
+          requestAnimationFrame(() => requestAnimationFrame(() => ghost.classList.add('visible')));
+
+          spawned++;
+          const delay = spawned < 20 ? 180 : spawned < 50 ? 100 : 50;
+          setTimeout(spawnOne, delay);
+        }
+
+        spawnOne();
+      }
+
+      // começa a spawnar após a mensagem central aparecer
+      setTimeout(spawnGhosts, 2000);
+
+      // depois de tudo coberto, fade para preto total
+      setTimeout(() => {
+        whisper.fadeOut(3);
+        svMain.style.transition = 'opacity 1s ease';
+        svMain.style.opacity = '0';
+        setTimeout(() => {
+          svBlackout.classList.add('active');
+        }, 500);
+      }, 12000);
+
+    // ── SEGUNDA VISITA — quem NÃO VIU (anomalia sutil) ──
+    } else if (state.visitou && !state.viu) {
+      document.getElementById('subtle-anomaly').style.display = 'block';
+
+    // ── PRIMEIRA VISITA — configura o sorteio ──
+    } else {
+      saveState({ visitou: true, viu: false, secreto: false });
+
+      let scrollTimer = null;
+      let eventFired = false;
+
+      window.addEventListener('scroll', () => {
+        if (eventFired) return;
+
+        const scrolled = window.scrollY + window.innerHeight;
+        const total = document.documentElement.scrollHeight;
+        const pct = scrolled / total;
+
+        if (pct >= 0.95) {
+          if (scrollTimer) clearTimeout(scrollTimer);
+          scrollTimer = setTimeout(() => {
+            if (eventFired) return;
+            eventFired = true;
+
+            // sorteio 25%
+            if (Math.random() < 0.25) {
+              triggerEvent();
+            }
+          }, 3000);
+        } else {
+          if (scrollTimer) clearTimeout(scrollTimer);
+        }
+      });
+    }
+
+    // ── FUNÇÕES DE TESTE (remova antes de publicar) ──
+    function setStatus(msg) {
+      const el = document.getElementById('dev-status');
+      if (el) { el.textContent = msg; setTimeout(() => { el.textContent = ''; }, 3000); }
+    }
+
+    function testEvent() {
+      setStatus('disparando evento...');
+      triggerEvent();
+    }
+
+    function testSecondVisit() {
+      saveState({ visitou: true, viu: true, secreto: false });
+      setStatus('salvo · recarregue a página');
+    }
+
+    function resetAll() {
+      localStorage.removeItem(STORAGE_KEY);
+      // fecha qualquer overlay aberto
+      document.getElementById('overlay-event').classList.remove('active');
+      document.getElementById('second-visit-screen').classList.remove('active');
+      document.getElementById('overlay-event').style.opacity = '';
+      document.getElementById('overlay-event').style.transition = '';
+      document.getElementById('second-visit-screen').style.opacity = '';
+      document.body.style.overflow = '';
+      document.title = 'Andar 3 — "Remains"';
+      setStatus('resetado · recarregue a página');
+    }
+
+    function triggerEvent() {
+      // Marca viu=true mas secreto só é salvo quando a segunda visita de fato ocorrer
+      saveState({ visitou: true, viu: true, secreto: false });
+
+      const overlay = document.getElementById('overlay-event');
+      const text = document.getElementById('overlay-text');
+      const sub = document.getElementById('overlay-sub');
+
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      document.title = 'eles estão em todo lugar';
+
+      // tela preta por 4s, depois sussurro, depois texto
+      setTimeout(() => {
+        const whisper = createWhisperAudio();
+        whisper.fadeIn(3);
+
+        setTimeout(() => {
+          text.textContent = 'eles estão em todo lugar.';
+          text.classList.add('visible');
+
+          setTimeout(() => {
+            sub.textContent = 'você sempre soube disso.';
+            sub.classList.add('visible');
+
+            setTimeout(() => {
+              whisper.fadeOut(2);
+              setTimeout(() => {
+                overlay.style.transition = 'opacity 1.5s ease';
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                  location.reload();
+                }, 1500);
+              }, 1000);
+            }, 5000);
+          }, 2000);
+        }, 2000);
+      }, 4000);
+    }
+  </script>
+
+</body>
+</html>

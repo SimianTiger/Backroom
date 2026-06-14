@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nível -7 — Backrooms</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c03030'>⚠</text></svg>">
+  <title>⚠ Nível -7 — Backrooms</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
 
@@ -419,6 +420,41 @@
       border-top: 1px solid var(--border);
     }
 
+    /* ── BTN NEXT LEVEL ── */
+    .btn-next-level {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--muted);
+      color: var(--accent);
+      padding: 1rem 1.8rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      z-index: 9999999;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+    }
+    .btn-next-level.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .btn-next-level:hover {
+      background: var(--bg);
+      border-left-color: var(--red-glow);
+      color: var(--red-glow);
+      transform: translateY(-2px);
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 580px) {
       .cycle-grid {
@@ -623,6 +659,23 @@
   <footer>
     M.E.G — Arquivos de Campo &nbsp;·&nbsp; Nível −7 &nbsp;·&nbsp; Acesso Restrito
   </footer>
+
+  <a href="andar1.html" class="btn-next-level">Próximo Nível ➔</a>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      const btn = document.querySelector('.btn-next-level');
+      if (btn) {
+        const pct = (window.innerHeight + window.scrollY) / document.body.offsetHeight;
+        if (pct >= 0.85 || document.body.offsetHeight <= window.innerHeight) {
+          btn.classList.add('visible');
+        } else {
+          btn.classList.remove('visible');
+        }
+      }
+    });
+    window.dispatchEvent(new Event('scroll'));
+  </script>
 
 </body>
 

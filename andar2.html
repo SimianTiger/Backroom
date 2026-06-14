@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23888888'>∅</text></svg>">
+  <title>∅ Andar 2 — "Depths"</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=IM+Fell+English:ital@0;1&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
+
+    :root {
+      --bg: #0c0c0c;
+      --paper: #111111;
+      --muted: #181818;
+      --border: #2a2a2a;
+      --dim: #484848;
+      --body: #a0a0a0;
+      --accent: #888888;
+      --accent-light: #c0c0c0;
+      --white: #e8e8e8;
+      --mono: 'Share Tech Mono', monospace;
+      --serif: 'IM Fell English', serif;
+      --sans: 'Barlow Condensed', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* grain mais pesado — o segundo andar é mais perturbador */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.055;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* sombra de cursor que atrasa */
+    #cursor-shadow {
+      position: fixed;
+      width: 18px;
+      height: 18px;
+      border: 1px solid rgba(150,150,150,0.25);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transition: left 0.4s ease, top 0.4s ease;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(3rem, 8vh, 5rem);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 40% at 70% 30%, #1a1a1a 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 20% 80%, #141414 0%, transparent 60%),
+        var(--bg);
+    }
+
+    /* indicador de observação */
+    .watch-indicator {
+      position: absolute;
+      top: clamp(1.5rem, 4vh, 3rem);
+      right: clamp(1.5rem, 4vw, 3rem);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    .watch-indicator .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--dim);
+      animation: watch-pulse 5s ease-in-out infinite;
+    }
+
+    @keyframes watch-pulse {
+      0%, 100% { opacity: 0.2; }
+      45%, 55% { opacity: 1; background: #888; box-shadow: 0 0 6px #666; }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-size: clamp(3.8rem, 10vw, 8rem);
+      font-weight: 400;
+      line-height: 0.92;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero-title span {
+      display: block;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.45em;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-rule {
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-rule::before {
+      content: '';
+      display: block;
+      width: clamp(4rem, 12vw, 8rem);
+      height: 1px;
+      background: var(--dim);
+    }
+
+    .hero-sub {
+      max-width: 52ch;
+      font-size: 1.05rem;
+      color: var(--body);
+      font-style: italic;
+      font-family: var(--serif);
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 6vw, 3rem);
+    }
+
+    section {
+      padding: 4rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-of-type { border-bottom: none; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding-top: 0.15em;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.4rem, 3vw, 1.9rem);
+      font-weight: 400;
+      color: var(--accent-light);
+      line-height: 1.2;
+    }
+
+    h3 {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    h3:first-child { margin-top: 0; }
+
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ── INFO ROW ── */
+    .info-row {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .info-item { display: flex; flex-direction: column; gap: 0.2rem; }
+
+    .info-item dt {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    .info-item dd {
+      font-size: 0.9rem;
+      color: var(--accent);
+      font-family: var(--sans);
+    }
+
+    /* ── ZONA ── */
+    .zone {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      margin-bottom: 1px;
+      position: relative;
+    }
+
+    .zone-tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dim);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ── RELATÓRIO ── */
+    .doc {
+      background: #0e0e0e;
+      border: 1px solid #2a2a2a;
+      padding: 1.8rem;
+      margin: 1.5rem 0;
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .doc-header {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      border-bottom: 1px solid #2a2a2a;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .doc p { margin-bottom: 0.8rem; }
+    .doc p:last-child { margin-bottom: 0; }
+
+    /* ── AVISO ── */
+    .warning {
+      background: #141414;
+      border: 1px solid #333;
+      padding: 1rem 1.2rem;
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 0.8rem;
+      align-items: flex-start;
+      font-size: 0.88rem;
+    }
+
+    .warning::before {
+      content: '▲';
+      color: #666;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      padding-top: 0.1rem;
+    }
+
+    /* texto que desaparece enquanto lê */
+    .fade-text {
+      position: relative;
+    }
+
+    .fade-text.fading {
+      animation: text-fade 6s ease-in forwards;
+    }
+
+    @keyframes text-fade {
+      0% { opacity: 1; }
+      60% { opacity: 1; }
+      100% { opacity: 0.08; }
+    }
+
+    /* ── BARRA DE TEMPERATURA (efeito visual) ── */
+    .temp-drop {
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-left: 3px solid #444;
+      padding: 1rem 1.4rem;
+      margin: 1rem 0;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      color: var(--dim);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── NAV ANDARES ── */
+    .floor-nav {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .floor-btn {
+      flex: 1;
+      background: var(--paper);
+      padding: 1rem;
+      text-align: center;
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      transition: background 0.2s, color 0.2s;
+      display: block;
+    }
+
+    .floor-btn.active {
+      background: #2a2a2a;
+      color: var(--accent-light);
+    }
+
+    .floor-btn:hover:not(.active) {
+      background: var(--muted);
+      color: var(--accent);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+    }
+
+
+
+    @media (max-width: 580px) {
+      .info-row { flex-direction: column; gap: 0.8rem; }
+      .floor-nav { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- sombra de cursor atrasada -->
+  <div id="cursor-shadow"></div>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-bg"></div>
+
+    <div class="watch-indicator">
+      <div class="dot"></div>
+      algo está observando
+    </div>
+
+    <p class="hero-eyebrow">Arquivo M.E.G · Acesso Restrito · Permanência Máx: 90 min</p>
+    <h1 class="hero-title">
+      Andar 2
+      <span>"Depths"</span>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">
+      A temperatura caiu 8 graus quando o elevador fechou.<br>
+      O cheiro de lavanda sumiu completamente.
+    </p>
+  </header>
+
+  <div class="container">
+
+    <!-- NAV ANDARES -->
+    <div class="floor-nav" style="margin-top:2.5rem;">
+      <a href="andar1.html" class="floor-btn">Andar 1 — Lobby</a>
+      <a href="andar2.html" class="floor-btn active">Andar 2 — Depths</a>
+      <a href="andar3.html" class="floor-btn">Andar 3 — Remains</a>
+    </div>
+
+    <!-- VISÃO GERAL -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Visão Geral</span>
+        <h2>Os bastidores de algo que não deveria existir</h2>
+      </div>
+
+      <dl class="info-row">
+        <div class="info-item">
+          <dt>Iluminação</dt>
+          <dd>Consideravelmente inferior</dd>
+        </div>
+        <div class="info-item">
+          <dt>Odor</dt>
+          <dd>Metálico e úmido</dd>
+        </div>
+        <div class="info-item">
+          <dt>Moradores avistados</dt>
+          <dd>Raros</dd>
+        </div>
+        <div class="info-item">
+          <dt>Permanência recomendada</dt>
+          <dd>Máx. 90 minutos</dd>
+        </div>
+      </dl>
+
+      <p style="margin-top:1.5rem;">O Segundo Andar se assemelha aos bastidores de um shopping abandonado. Corredores estreitos, pouca luz, canos expostos. O cheiro agradável do andar superior não existe aqui — foi substituído por algo metálico e úmido que gruda nas roupas.</p>
+
+      <div class="temp-drop">▼ TEMP: −8°C em relação ao Andar 1 · Odor: metálico · Moradores: ausentes nos primeiros 120 min</div>
+
+      <div class="doc" style="margin-top:1.5rem;">
+        <div class="doc-header">📄 Relatório Oficial M.E.G — Expedição #009-D · Classificação: Restrito</div>
+        <p>Ao utilizar os elevadores do Primeiro Andar, a equipe notou que o ambiente mudou de forma imediata e significativa. A temperatura caiu aproximadamente 8 graus. O cheiro de lavanda foi substituído por odor metálico e úmido.</p>
+        <p>Nenhum morador foi avistado durante as primeiras duas horas de exploração.</p>
+        <p>Agente 3 relatou sensação de ser observado a partir do momento em que os elevadores fecharam. Os demais confirmaram a mesma sensação dentro de 20 minutos.</p>
+        <p><strong style="color:var(--accent-light);">Nota do líder:</strong> Recomendo reduzir o tempo máximo de permanência para 90 minutos. O efeito psicológico é mensurável e consistente entre todos os agentes.</p>
+      </div>
+    </section>
+
+    <!-- SALA 1 — PISCINAS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Sala 1</span>
+        <h2>Piscinas</h2>
+      </div>
+
+      <p>Contém piscinas olímpicas, piscinas infantis e profundidades aparentemente infinitas. Exploradores relatam que após aproximadamente sete metros de profundidade sentem desespero extremo, medo irracional e sensação brutal de vazio existencial.</p>
+      <p>Até hoje ninguém encontrou o fundo.</p>
+
+      <div class="doc">
+        <div class="doc-header">🎙 Gravação Subaquática — Agente R. Costa · Teste de mergulho #2 · Áudio parcialmente preservado</div>
+        <p><em>[som de respiração com equipamento]</em></p>
+        <p>"Estou a aproximadamente cinco metros. Visibilidade boa. A água é transparente mas... escura lá embaixo. Não consigo ver o fundo."</p>
+        <p><em>[pausa de 40 segundos]</em></p>
+        <p>"Seis metros. Ainda sem fundo visível. A piscina infantil não deveria ter mais de um metro e meio."</p>
+        <p><em>[pausa]</em></p>
+        <p>"Sete metros."</p>
+        <p><em>[silêncio de 12 segundos]</em></p>
+        <p>"Subindo. Subindo agora."</p>
+        <p><em>[som de movimentação intensa — agente emerge]</em></p>
+        <p>"Cancela o teste. Cancela tudo. Não tem nada lá embaixo mas... tem alguma coisa lá embaixo."</p>
+        <p style="color:var(--dim); font-style:italic;"><em>O agente recusou-se a elaborar no relatório posterior.</em></p>
+      </div>
+    </section>
+
+    <!-- SALA 2 — ENCANAMENTOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Sala 2</span>
+        <h2>Encanamentos</h2>
+      </div>
+
+      <p>Uma enorme estrutura industrial composta por canos, válvulas, tubulações e sistemas desconhecidos. O local aparentemente distribui água e energia para todo o nível.</p>
+
+      <div class="warning">
+        Nenhuma tomada alimenta as luzes. Nenhuma bomba foi encontrada. Nenhuma fonte de energia existe visivelmente. Durante toda permanência, agentes relataram sensação intensa de observação e angústia.
+      </div>
+
+      <p style="margin-top:1rem;">Nenhuma saída além da entrada original foi encontrada.</p>
+    </section>
+
+    <!-- SALA 3 — MORADIAS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Sala 3</span>
+        <h2>Moradias?</h2>
+      </div>
+
+      <p>Corredores extremamente escuros contendo pequenas salas com beliches mofados, colchões deformados e cheiro de mofo. As marcas nos colchões são perfeitas — formato exato de corpos deitados.</p>
+      <p>Nenhum morador foi visto utilizando essas salas. Os corredores se tornam progressivamente mais escuros conforme avançam. A equipe decidiu interromper a exploração antes do final.</p>
+
+      <div class="doc">
+        <div class="doc-header">📋 Diário Pessoal — Agente K. Moraes · Entrada #9 · Caligrafia visivelmente deteriorada</div>
+        <p class="fade-text" id="fade1">Desci pro segundo andar hoje.</p>
+        <p class="fade-text" id="fade2">Não devia ter feito isso.</p>
+        <p>O quarto lá embaixo tinha uma cama com o formato do meu corpo no colchão. Exatamente o meu formato. Como se alguém tivesse dormido ali por anos com o mesmo peso, a mesma altura, a mesma posição que eu durmo.</p>
+        <p>Não entrei.</p>
+        <p style="text-decoration:line-through; opacity:0.4;">Quero voltar pro primeiro andar.</p>
+        <p style="text-decoration:line-through; opacity:0.4;">O primeiro andar era bom.</p>
+        <p>O primeiro andar era bom?</p>
+        <p><em>Quando eu comecei a achar o primeiro andar bom?</em></p>
+      </div>
+    </section>
+
+    <!-- EFEITOS PSICOLÓGICOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Relatório Psicológico</span>
+        <h2>Efeitos do Segundo Andar</h2>
+      </div>
+
+      <p>Os efeitos psicológicos se tornam severos neste andar:</p>
+
+      <div class="zone">
+        <span class="zone-tag">Sintomas documentados</span>
+        <p>Ansiedade crescente, insônia, estresse acumulado, sensação de vazio, paranoia e dúvidas sobre a própria realidade. Diversos agentes passaram a acreditar que o primeiro andar era uma espécie de "paraíso" e este seria uma punição.</p>
+      </div>
+
+      <div class="warning" style="margin-top:1rem;">
+        Ao contrário do Primeiro Andar, nada é corrigido aqui. Moradores ignoram completamente sujeira e bagunça. O ambiente parece indiferente à sua presença — o que é, à sua maneira, mais perturbador que hostilidade.
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    M.E.G — Arquivos de Campo &nbsp;·&nbsp; Nível −9 · Andar 2 &nbsp;·&nbsp; Acesso Restrito
+  </footer>
+
+
+
+  <script>
+    // sombra de cursor atrasada
+    const shadow = document.getElementById('cursor-shadow');
+    document.addEventListener('mousemove', e => {
+      shadow.style.left = e.clientX + 'px';
+      shadow.style.top = e.clientY + 'px';
+    });
+
+    // texto que desaparece ao ser lido (após hover)
+    document.querySelectorAll('.fade-text').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        if (!el.classList.contains('fading')) {
+          el.classList.add('fading');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
