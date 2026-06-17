@@ -1010,6 +1010,8 @@
         svMain.style.opacity = '0';
         setTimeout(() => {
           svBlackout.classList.add('active');
+          const btn = document.querySelector('.btn-next-level');
+          if (btn) btn.classList.add('visible');
         }, 500);
       }, 12000);
 
