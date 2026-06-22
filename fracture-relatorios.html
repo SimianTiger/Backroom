@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%238a4020'>☠</text></svg>">
+  <title>☠ Relatórios — Nível -8 "Fracture"</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Special+Elite&display=swap');
+
+    :root {
+      --bg: #050505;
+      --paper: #080808;
+      --border: #181818;
+      --dim: #303030;
+      --mono: 'Share Tech Mono', monospace;
+      --vt: 'VT323', monospace;
+      --type: 'Special Elite', 'Courier New', monospace;
+
+      /* cores por fase */
+      --c1: #8ab0c8;   /* fase 1 — azul frio, racional */
+      --c2: #c0a840;   /* fase 2 — âmbar, algo errado */
+      --c3: #c07030;   /* fase 3 — laranja, desespero */
+      --c4: #c04030;   /* fase 4 — vermelho, crítico */
+      --c5: #801818;   /* fase 5 — vermelho escuro */
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: #606060;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* grain */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 9997;
+    }
+
+    /* ── HEADER ── */
+    .terminal-header {
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .terminal-title {
+      font-family: var(--vt);
+      font-size: 1.6rem;
+      color: #505050;
+      letter-spacing: 0.1em;
+      line-height: 1;
+    }
+
+    .terminal-title span {
+      display: block;
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      color: var(--dim);
+      letter-spacing: 0.2em;
+      margin-top: 0.3rem;
+    }
+
+    .terminal-meta {
+      text-align: right;
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--dim);
+      line-height: 1.8;
+    }
+
+    /* ── NAV ── */
+    .level-nav {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-btn {
+      flex: 1;
+      background: var(--paper);
+      padding: 0.8rem 1rem;
+      text-align: center;
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      transition: background 0.2s, color 0.2s;
+      display: block;
+    }
+
+    .nav-btn.active { background: #0f0f0f; color: #505050; }
+    .nav-btn:hover:not(.active) { background: #0a0a0a; color: #404040; }
+
+    /* ── FEED ── */
+    .feed {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* ── MENSAGEM ── */
+    .msg {
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .msg.visible { opacity: 1; }
+
+    .msg-meta {
+      display: flex;
+      gap: 1.5rem;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .msg-date {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .msg-status {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .msg-body {
+      border-left: 2px solid currentColor;
+      padding-left: 1.2rem;
+      font-family: var(--type);
+      font-size: 0.92rem;
+      line-height: 1.85;
+      letter-spacing: 0.01em;
+      white-space: pre-wrap;
+    }
+
+    /* cores por fase */
+    .phase-1 { color: var(--c1); }
+    .phase-2 { color: var(--c2); }
+    .phase-3 { color: var(--c3); }
+    .phase-4 { color: var(--c4); }
+    .phase-5 { color: var(--c5); }
+
+    /* ── SINAL PERDIDO ── */
+    .signal-lost {
+      margin: 1.5rem 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .signal-lost.visible { opacity: 1; }
+
+    .signal-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #2a2a2a;
+    }
+
+    .signal-bar::before,
+    .signal-bar::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #1a1a1a;
+    }
+
+    /* ── LOADER DE PONTOS ── */
+    .loader {
+      display: none;
+      align-items: center;
+      gap: 0;
+      margin: 1.5rem 0;
+      height: 24px;
+    }
+
+    .loader.active { display: flex; }
+
+    .dot-wrap {
+      display: flex;
+      gap: 0;
+      align-items: center;
+    }
+
+    /* cada ponto individualmente */
+    .ld {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0;
+      transform: scale(0.4);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      margin: 0 3px;
+    }
+
+    .ld.on {
+      opacity: 0.9;
+      transform: scale(1);
+    }
+
+    /* parênteses em volta */
+    .loader-paren {
+      font-family: var(--mono);
+      font-size: 1rem;
+      opacity: 0.3;
+      line-height: 1;
+    }
+
+    .loader-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-left: 1rem;
+    }
+
+    /* ── CURSOR PISCANDO ── */
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 1em;
+      background: currentColor;
+      opacity: 0.8;
+      animation: blink 1.1s step-end infinite;
+      vertical-align: text-bottom;
+      margin-left: 2px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0; }
+    }
+
+    /* ── TEXTO CORROMPIDO (fase 5) ── */
+    .corrupted {
+      font-family: var(--vt);
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      filter: blur(0.3px);
+    }
+
+    /* ── LINHA FINAL PULSANDO ── */
+    .pulse-dots {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .pulse-dots span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--c5);
+      opacity: 0;
+    }
+
+    .pulse-dots span:nth-child(1) { animation: pdot 2s ease-in-out 0.0s infinite; }
+    .pulse-dots span:nth-child(2) { animation: pdot 2s ease-in-out 0.4s infinite; }
+    .pulse-dots span:nth-child(3) { animation: pdot 2s ease-in-out 0.8s infinite; }
+
+    @keyframes pdot {
+      0%, 100% { opacity: 0; transform: scale(0.5); }
+      40%, 60% { opacity: 0.8; transform: scale(1); }
+    }
+
+    /* ── BTN NEXT LEVEL ── */
+    .btn-next-level {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--paper);
+      color: var(--dim);
+      padding: 1rem 1.8rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--dim);
+      z-index: 9999999;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+      text-align: center;
+    }
+
+    .btn-next-level.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .btn-next-level:hover {
+      background: var(--bg);
+      border-left-color: var(--c4);
+      color: var(--c4);
+      transform: translateY(-2px);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="terminal-header">
+    <div>
+      <div class="terminal-title">
+        FRACTURE · FEED
+        <span>Nível -8 · Relatórios em tempo real · M.E.G Operações</span>
+        <span>Arquivo M.E.G · Classificação: Extremo Risco</span>
+        <span style="margin-top: 0.8rem; font-style: italic; color: var(--dim); font-family: var(--vt); font-size: 1rem; letter-spacing: 0.05em;">"Não há monstros por aqui, o nível os cria..."</span>
+      </div>
+    </div>
+    <div class="terminal-meta">
+      EXPEDIÇÃO: #008-F<br>
+      EQUIPE INICIAL: 8 soldados<br>
+      CONTATOS ATIVOS: <span style="color:#801818;">1</span><br>
+      STATUS: ATIVO
+    </div>
+  </header>
+
+  <nav class="level-nav">
+    <a href="fracture-visao-geral.html" class="nav-btn">Visão Geral</a>
+    <a href="fracture-relatorios.html" class="nav-btn active">Relatórios · Ao Vivo</a>
+  </nav>
+
+  <!-- loader global de conexão inicial -->
+  <div class="feed" id="feed">
+
+    <div id="connecting" style="margin: 3rem 0; color: var(--dim);">
+      <div style="font-size:0.65rem; letter-spacing:0.2em; text-transform:uppercase; margin-bottom:1rem;">
+        conectando à rede M.E.G...
+      </div>
+      <div class="loader active phase-1" id="init-loader">
+        <span class="loader-paren">(</span>
+        <div class="dot-wrap">
+          <span class="ld"></span>
+          <span class="ld"></span>
+          <span class="ld"></span>
+        </div>
+        <span class="loader-paren">)</span>
+        <span class="loader-label">aguardando sinal</span>
+      </div>
+    </div>
+
+    <!-- as mensagens vão ser injetadas aqui pelo JS -->
+    <div id="messages"></div>
+
+  </div>
+
+  <footer>
+    M.E.G — Transmissão Ativa &nbsp;·&nbsp; Nível −8 · Fracture &nbsp;·&nbsp; Alto Secreto
+  </footer>
+
+  <a href="#" class="btn-next-level">Próximo Nível ➔<br><span style="font-size: 0.6em; color: var(--dim); display: block; margin-top: 0.3rem;">Em desenvolvimento</span></a>
+
+<script>
+// ═══════════════════════════════════════════════
+// DADOS DAS MENSAGENS
+// Para adicionar mensagens: copie um objeto do
+// array e preencha os campos. Deixe o texto entre
+// as crases (`). Use \n para quebrar linha.
+// phase: 1 a 5 (muda a cor)
+// cutAt: número de chars onde o sinal cai (0 = sem corte)
+// cutResume: hora da reconexão após o corte
+// ═══════════════════════════════════════════════
+const MESSAGES = [
+  {
+    day: "Dia 1",
+    time: "08:40",
+    status: "Sinal estável",
+    phase: 1,
+    cutAt: 0,
+    text: `Expedição #008-F iniciada. Equipe completa: eu, João, Bruno, Diego, Pedro, Carlos, Rafa e Gabi. Equipamento revisado, suprimentos para duas semanas. Entrada sem anomalias visíveis.
+
+O local é uma floresta densa, espécies variadas — de carvalhos a árvores que eu nunca vi fora daqui. Todas parecem novas demais. Sem folhas secas no chão, sem galho podre. Alguns frutos parecem perfeitos demais pra serem confiáveis. Protocolo proíbe consumo de qualquer coisa orgânica do nível. Vou reforçar isso com o grupo.
+
+Luz difusa, sem sol aparente. Sem vento, sem pássaros. João dividiu o grupo em duplas para o mapeamento inicial.`
+  },
+  {
+    day: "Dia 1",
+    time: "11:15",
+    status: "Sinal estável",
+    phase: 1,
+    cutAt: 0,
+    text: `Quase três horas dentro do nível. Bruno reclamou que a roupa estava apertando. Eu senti o mesmo, achei que fosse o calor. Carlos disse a mesma coisa sobre a dele. Estranho todo mundo sentir igual ao mesmo tempo, mas ninguém deu importância.
+
+O ciclo de luz aqui é rápido — já escureceu uma vez em pouco mais de duas horas. Cronometrando pelo meu relógio, não o daqui: deu pouco mais de três horas entre um período de claridade e o seguinte. Vou seguir registrando.`
+  },
+  {
+    day: "Dia 1",
+    time: "16:02",
+    status: "Sinal fraco",
+    phase: 1,
+    cutAt: 410,
+    cutResume: "Dia 1 — 19:30",
+    text: `Algo mudou no tom do grupo nessa última hora. João respondeu seco quando Rafa perguntou se podíamos parar pra comer. Pedro xingou baixo quando tropeçou numa raiz — normal, mas o jeito como disse não parecia ele.
+
+A piada que o Diego contou agora pouco, do tipo que sempre faz todo mundo rir, quase ninguém sorriu. O clima está mais pesado a cada hora e não sei dizer por quê. Vou marcar isso e ver se persistir até amanhã. Se for só cansaço, deve passar com uma noite de sono.`
+  },
+  {
+    day: "Dia 2",
+    time: "08:10",
+    status: "Sinal fraco",
+    phase: 2,
+    cutAt: 0,
+    text: `Noite curta, como sempre aqui — umas duas horas, talvez menos. Mesmo assim ninguém dormiu direito. A sensação de roupa apertada não passou. Piorou.
+
+Discussão boba entre Bruno e Gabi sobre o rumo do mapeamento. Nada grave, mas as palavras foram mais duras que o necessário e os dois pareceram surpresos com o próprio tom depois. Primeiro sinal de algo fora do comum, registrando com pouco mais de sete horas de exposição.`
+  },
+  {
+    day: "Dia 2",
+    time: "14:48",
+    status: "Sinal instável",
+    phase: 2,
+    cutAt: 423,
+    cutResume: "Dia 2 — 21:05",
+    text: `Primeiro contato físico hoje. Bruno deu um tapa de leve no braço do Diego depois de uma provocação boba — os dois riram na hora, chamaram de brincadeira. Mas o tapa foi mais forte do que qualquer brincadeira nossa costuma ser.
+
+Reparei que a floresta ao redor do acampamento está diferente. Mais escura nas bordas, mesmo no período de luz. Pode ser impressão minha, mas dois outros comentaram a mesma coisa sem eu perguntar nada sobre isso. Ninguém sabe explicar.`
+  },
+  {
+    day: "Dia 3",
+    time: "09:33",
+    status: "Sinal instável",
+    phase: 2,
+    cutAt: 0,
+    text: `Perdendo a conta de quantos ciclos de luz já passaram — são curtos e irregulares demais pra cronometrar com precisão. João assumiu um tom mais autoritário, irritado com qualquer pergunta.
+
+Pedro e Carlos andam sempre juntos agora, conversando baixo, calados quando alguém se aproxima. Rafa e Gabi ficaram mais quietos, andam mais afastados do resto. Ninguém comentou isso abertamente mas todos perceberam.`
+  },
+  {
+    day: "Dia 3",
+    time: "22:14",
+    status: "Sinal crítico",
+    phase: 2,
+    cutAt: 291,
+    cutResume: "Dia 4 — 03:50",
+    text: `Bruno acusou Diego de esconder comida. Não era verdade — conferi os dois suprimentos, batem certinho. Mesmo assim Bruno insistiu, disse que \"sentiu\" que estava faltando algo. Quase virou soco.
+
+À noite ouvi um som de vento entre as árvores. Não tem vento aqui. Nunca teve. Fui checar e não achei nada. Acho que só estou cansado.`
+  },
+  {
+    day: "Dia 4",
+    time: "13:20",
+    status: "Sinal crítico",
+    phase: 3,
+    cutAt: 0,
+    text: `Achei uma caixa hoje, longe do acampamento, meio enterrada entre raízes — deve ter caído do céu, suprimento lançado em ponto aleatório do nível, quase impossível de ouvir caindo por causa da mata fechada. Dentro, garrafas de água com cheiro leve de amêndoas. Quatro garrafas. Guardei sem contar ao grupo, ainda sem saber se era seguro.
+
+A paranoia entre eles está pior. Pedro disse que sentiu o olhar do Rafa \"de cima a baixo\", como se estivesse sendo julgado. Rafa nem tinha olhado na direção dele.`
+  },
+  {
+    day: "Dia 5",
+    time: "02:47",
+    status: "Sinal muito fraco",
+    phase: 3,
+    cutAt: 0,
+    text: `Não aguentei a sede e bebi uma das garrafas. Em poucos minutos foi como se uma névoa saísse da minha cabeça de uma vez. Lúcido. Completamente lúcido pela primeira vez em dias — e foi aí que percebi o quanto eu também já estava afetado, sem nunca ter notado.
+
+Lembrei de tudo com clareza: cada comentário estranho, cada silêncio errado, cada resposta seca sem motivo. Não é cansaço. Não é estresse de expedição. É o nível.
+
+Vou tentar avisar o grupo amanhã.`
+  },
+  {
+    day: "Dia 5",
+    time: "16:09",
+    status: "Sinal fraco",
+    phase: 3,
+    cutAt: 0,
+    text: `Tentei. Fui até João primeiro — me ouviu calado e depois perguntou de onde eu tinha tirado aquela água, com o tom de quem já desconfia de tudo. Fui até Bruno — recuou, disse que eu provavelmente queria envenenar alguém pra ficar com os suprimentos sozinho.
+
+Só Gabi parou pra escutar de verdade. Mas antes de eu trazer a água, Pedro e Carlos se meteram no meio e Gabi recuou também, sem olhar pra mim de novo.
+
+Estou sozinho com o que sei.`
+  },
+  {
+    day: "Dia 7",
+    time: "05:18",
+    status: "Sinal crítico",
+    phase: 3,
+    cutAt: 0,
+    text: `Dias sem conseguir falar com ninguém direito. O grupo se fragmentou de vez — João isolado tentando manter uma autoridade que ninguém mais reconhece, Pedro e Carlos sempre colados, Rafa e Gabi cada um por si agora, nem entre eles dois sobrou confiança.
+
+Na última noite ouvi sussurros vindos da mata, sem palavras que eu conseguisse entender. Fiquei parado, com vontade de ir até lá, e tive que me forçar a voltar. Não contei pra ninguém.`
+  },
+  {
+    day: "Dia 9",
+    time: "23:40",
+    status: "Sinal crítico",
+    phase: 3,
+    cutAt: 472,
+    cutResume: "Dia 10 — 04:12",
+    text: `Hoje à noite vi o fogo do acampamento do Rafa apagado de propósito — pegadas iam até lá e voltavam. Ninguém assumiu. Também ouvi o Diego conversando sozinho atrás das árvores, num tom calmo, como se respondesse a alguém. Não tinha ninguém com ele.
+
+A mata está mais densa do que quando chegamos. Mais escura nas bordas do acampamento, mesmo durante o período claro. Tenho visto sombras entre as árvores que somem quando encaro direito. Não sei se é o nível ou se sou só eu, mas todos comentaram a mesma coisa em algum momento.`
+  },
+  {
+    day: "Dia 13",
+    time: "14:55",
+    status: "Sinal muito fraco",
+    phase: 4,
+    cutAt: 0,
+    text: `Ataque sério ontem. Bruno e Diego pegaram Rafa desprevenido, sozinho, longe do resto. Bateram com força — não foi brincadeira dessa vez. Perguntei depois e Bruno só disse que Rafa \"merecia, porque tinha falado mal dele tempos atrás\" — coisa que nunca aconteceu, eu estava lá.
+
+Rafa sobreviveu, mas está mancando e não fala com ninguém. Estou racionando minha água. Restam duas garrafas.`
+  },
+  {
+    day: "Dia 16",
+    time: "02:30",
+    status: "—",
+    phase: 4,
+    cutAt: 0,
+    text: `Não vou detalhar o que aconteceu essa madrugada. Alguém morreu. Não vou escrever o nome.
+
+O corpo foi usado. A lógica deles agora é que o estoque que cada grupo escondeu nunca foi suficiente, que os outros estavam roubando, então é preciso \"guardar mais\". Ouvi um deles dizer baixo que era melhor assim — que a pessoa \"só ia continuar sugando os recursos de qualquer jeito\".
+
+Isto não é mais uma expedição. Estou tentando mapear rotas pra achar uma brecha até a entrada.`
+  },
+  {
+    day: "Dia 18",
+    time: "20:12",
+    status: "Sinal crítico",
+    phase: 4,
+    cutAt: 0,
+    text: `Confirmado o que eu temia. Encontrei restos perto do antigo acampamento — não vou descrever. Não foi a primeira vez. Pelo jeito como falam disso agora, sem nojo, quase com gosto, isso já virou rotina pra eles.
+
+Não é mais sobre precisar. Já tem comida suficiente lá. É outra coisa. Vejo no jeito como riem depois.`
+  },
+  {
+    day: "Dia 20",
+    time: "11:05",
+    status: "Sinal muito fraco",
+    phase: 4,
+    cutAt: 0,
+    text: `Encontrei outra caixa hoje, mais perto do que eu esperava. Três garrafas. Achei antes de ouvir os passos — quase fui pego. Corri.
+
+Eles têm zonas agora. Patrulham em duplas, alternando os caminhos, como se soubessem onde alguém tentaria passar. Não sei mais quem está em qual grupo. O jeito de rir de quem eu ainda reconheço pelo andar mudou completamente.`
+  },
+  {
+    day: "Dia 24",
+    time: "19:47",
+    status: "Sinal crítico",
+    phase: 4,
+    cutAt: 169,
+    cutResume: "Dia 25 — 02:18",
+    text: `Dois exploradores entraram no nível hoje — não eram da M.E.G pelo equipamento. Tentei chegar até eles pra avisar, mas a patrulha foi mais rápida. Corri antes de ver o que aconteceu depois. Não preciso ver pra saber.
+
+Se alguém da M.E.G está lendo isso: parem de mandar gente sem plano de extração. E não tragam água de amêndoas de outro nível — não funciona aqui, já tentei. Tem que ser a daqui.`
+  },
+  {
+    day: "Dia 27",
+    time: "?:??",
+    status: "Sinal crítico",
+    phase: 5,
+    cutAt: 156,
+    cutResume: "Dia 28 — ?:??",
+    text: `minha última garrafa acabou faz dois dias
+
+a névoa está voltando, sinto nas bordas do pensamento, tentando lembrar coisas que sei que são verdade mas já não tenho certeza
+
+preciso achar mais antes que`
+  },
+  {
+    day: "Dia 30",
+    time: "?:??",
+    status: "Reconectando",
+    phase: 5,
+    cutAt: 0,
+    text: `encontrei mais
+estou bem
+ainda estou aqui
+
+não sei mais quantos dias faz isso
+o relógio não bate com nada que eu sinto
+
+a mata aqui perto do meu esconderijo tá quase preta agora, mesmo na claridade
+acho que sou só eu vendo assim
+ninguém pra perguntar
+
+alguém está recebendo isso`
+  },
+  {
+    day: "Dia 35",
+    time: "?:??",
+    status: "Sinal crítico",
+    phase: 5,
+    cutAt: 50,
+    cutResume: "Dia 35 — ?:??",
+    text: `acho que vi o joão hoje
+de longe
+não é mais o joão que eu conhecia
+ele nem anda mais como gente`
+  },
+  {
+    day: "Dia 38",
+    time: "?:??",
+    status: "—",
+    phase: 5,
+    cutAt: 25,
+    cutResume: "Dia 38 — ?:??",
+    text: `eles estão`
+  }
+];
+
+// ═══════════════════════════════════════════════
+// ENGINE DE RENDERIZAÇÃO
+// ═══════════════════════════════════════════════
+
+const feed = document.getElementById('messages');
+const initLoader = document.getElementById('init-loader');
+const connecting = document.getElementById('connecting');
+
+// animação dos pontos
+function animateLoader(loaderEl, color, onDone) {
+  const dots = loaderEl.querySelectorAll('.ld');
+  loaderEl.style.color = color;
+  let cycle = 0;
+  const maxCycles = 4;
+
+  function step() {
+    // acende um por um
+    dots.forEach((d, i) => {
+      setTimeout(() => {
+        d.classList.add('on');
+      }, i * 200);
+    });
+
+    // apaga todos
+    setTimeout(() => {
+      dots.forEach(d => d.classList.remove('on'));
+      cycle++;
+      if (cycle < maxCycles) {
+        setTimeout(step, 300);
+      } else {
+        if (onDone) onDone();
+      }
+    }, dots.length * 200 + 300);
+  }
+
+  step();
+}
+
+// cria elemento de sinal perdido
+function makeSignalLost(label) {
+  const el = document.createElement('div');
+  el.className = 'signal-lost';
+  el.innerHTML = `<div class="signal-bar">${label}</div>`;
+  return el;
+}
+
+// cria loader inline
+function makeLoader(color) {
+  const el = document.createElement('div');
+  el.className = 'loader active';
+  el.style.color = color;
+  el.innerHTML = `
+    <span class="loader-paren">(</span>
+    <div class="dot-wrap">
+      <span class="ld"></span>
+      <span class="ld"></span>
+      <span class="ld"></span>
+    </div>
+    <span class="loader-paren">)</span>
+    <span class="loader-label">reconectando</span>
+  `;
+  return el;
+}
+
+// digita texto letra por letra
+function typeText(el, text, speed, onDone) {
+  let i = 0;
+  function next() {
+    if (i >= text.length) {
+      if (onDone) onDone();
+      return;
+    }
+    el.textContent += text[i];
+    i++;
+    setTimeout(next, speed + (Math.random() * speed * 0.4));
+  }
+  next();
+}
+
+// cor por fase
+const phaseColors = {
+  1: 'var(--c1)',
+  2: 'var(--c2)',
+  3: 'var(--c3)',
+  4: 'var(--c4)',
+  5: 'var(--c5)'
+};
+
+// renderiza uma mensagem (possivelmente com corte)
+function renderMessage(data, onDone) {
+  const color = phaseColors[data.phase];
+  const isFinal = data === MESSAGES[MESSAGES.length - 1];
+
+  // wrapper
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  feed.appendChild(msg);
+  setTimeout(() => msg.classList.add('visible'), 50);
+
+  // meta
+  const meta = document.createElement('div');
+  meta.className = 'msg-meta';
+  meta.innerHTML = `
+    <span class="msg-date" style="color:${color}88">${data.day} — ${data.time}</span>
+    <span class="msg-status" style="color:${color}66">${data.status}</span>
+  `;
+  msg.appendChild(meta);
+
+  // corpo
+  const body = document.createElement('div');
+  body.className = `msg-body ${data.phase === 5 ? 'corrupted' : ''}`;
+  body.style.borderColor = color;
+  body.style.color = color;
+  msg.appendChild(body);
+
+  const speed = data.phase <= 2 ? 18 : data.phase === 3 ? 22 : data.phase === 4 ? 28 : 35;
+
+  if (data.cutAt > 0) {
+    // texto até o corte
+    const partA = data.text.substring(0, data.cutAt);
+    typeText(body, partA, speed, () => {
+      // pausa depois do corte
+      setTimeout(() => {
+        // sinal perdido
+        const lost = makeSignalLost('SINAL PERDIDO');
+        feed.appendChild(lost);
+        setTimeout(() => lost.classList.add('visible'), 50);
+
+        setTimeout(() => {
+          // loader de reconexão
+          const loader = makeLoader(color);
+          feed.appendChild(loader);
+
+          animateLoader(loader, color, () => {
+            loader.remove();
+
+            // nova mensagem com timestamp diferente
+            const resumeMsg = document.createElement('div');
+            resumeMsg.className = 'msg';
+            feed.appendChild(resumeMsg);
+            setTimeout(() => resumeMsg.classList.add('visible'), 50);
+
+            const resumeMeta = document.createElement('div');
+            resumeMeta.className = 'msg-meta';
+            resumeMeta.innerHTML = `
+              <span class="msg-date" style="color:${color}88">${data.cutResume}</span>
+              <span class="msg-status" style="color:${color}66">reconectado</span>
+            `;
+            resumeMsg.appendChild(resumeMeta);
+
+            // texto resumido após reconexão (resto da mensagem)
+            const resumeBody = document.createElement('div');
+            resumeBody.className = `msg-body ${data.phase === 5 ? 'corrupted' : ''}`;
+            resumeBody.style.borderColor = color;
+            resumeBody.style.color = color;
+            resumeMsg.appendChild(resumeBody);
+
+            const partB = data.text.substring(data.cutAt);
+            typeText(resumeBody, partB.trim(), speed, () => {
+              if (isFinal) {
+                addFinalPulse(resumeBody, color);
+                const btn = document.querySelector('.btn-next-level');
+                if (btn) btn.classList.add('visible');
+              }
+              else if (onDone) onDone();
+            });
+          });
+        }, 1800);
+      }, 600);
+    });
+
+  } else {
+    // mensagem sem corte
+    typeText(body, data.text, speed, () => {
+      if (isFinal) {
+        addFinalPulse(body, color);
+        const btn = document.querySelector('.btn-next-level');
+        if (btn) btn.classList.add('visible');
+      }
+      else if (onDone) onDone();
+    });
+  }
+}
+
+// pontos pulsando eternamente na última mensagem
+function addFinalPulse(bodyEl, color) {
+  bodyEl.innerHTML += '\n';
+  const pulse = document.createElement('span');
+  pulse.className = 'pulse-dots';
+  pulse.innerHTML = '<span></span><span></span><span></span>';
+  pulse.style.color = color;
+  bodyEl.appendChild(pulse);
+}
+
+// intervalo entre mensagens (com pausa de sinal entre algumas)
+const MESSAGE_DELAYS = [
+  2200, 2600, 3000, 2800, 3200, 2600, 3400, 3000, 2800, 3600, 3200, 4000, 3600, 3800, 3200, 3600, 4200, 4800, 5200, 4600, 0
+];
+
+// renderiza em sequência com delays
+function renderSequence(index) {
+  if (index >= MESSAGES.length) return;
+
+  const data = MESSAGES[index];
+  const delay = MESSAGE_DELAYS[index] || 2500;
+
+  // entre algumas mensagens coloca um separador de sinal
+  const shouldAddGap = index > 0 && index % 3 === 0;
+
+  if (shouldAddGap) {
+    const gap = makeSignalLost('— —');
+    feed.appendChild(gap);
+    setTimeout(() => gap.classList.add('visible'), 50);
+
+    const loader = makeLoader(phaseColors[data.phase]);
+    feed.appendChild(loader);
+
+    animateLoader(loader, phaseColors[data.phase], () => {
+      loader.remove();
+      setTimeout(() => {
+        renderMessage(data, () => {
+          setTimeout(() => renderSequence(index + 1), delay);
+        });
+      }, 400);
+    });
+  } else {
+    renderMessage(data, () => {
+      setTimeout(() => renderSequence(index + 1), delay);
+    });
+  }
+}
+
+// inicia tudo
+animateLoader(document.querySelector('#init-loader'), 'var(--c1)', () => {
+  setTimeout(() => {
+    connecting.style.transition = 'opacity 0.5s';
+    connecting.style.opacity = '0';
+    setTimeout(() => {
+      connecting.remove();
+      renderSequence(0);
+    }, 500);
+  }, 600);
+});
+</script>
+
+</body>
+</html>

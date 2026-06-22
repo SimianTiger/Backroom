@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%238a4020'>☠</text></svg>">
+  <title>☠ Nível -8 — "Fracture"</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600&display=swap');
+
+    :root {
+      --bg: #0a0806;
+      --paper: #0f0c09;
+      --muted: #141008;
+      --border: #2a1f10;
+      --dim: #4a3520;
+      --body: #a08060;
+      --accent: #8a6040;
+      --accent-light: #c09060;
+      --warn: #8a4020;
+      --white: #e0c8a0;
+      --mono: 'Share Tech Mono', monospace;
+      --type: 'Courier Prime', monospace;
+      --serif: 'Playfair Display', serif;
+      --sans: 'Archivo', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.045;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(3rem, 8vh, 5rem);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 60% 30%, rgba(120,60,20,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(80,40,10,0.15) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .status-bar {
+      position: absolute;
+      top: clamp(1.5rem, 4vh, 3rem);
+      right: clamp(1.5rem, 4vw, 3rem);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--warn);
+      text-transform: uppercase;
+    }
+
+    .status-bar .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--warn);
+      animation: warn-pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes warn-pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--warn); }
+      50% { opacity: 0.2; box-shadow: none; }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      position: relative;
+      font-family: var(--serif);
+      font-size: clamp(3.6rem, 9.5vw, 7.6rem);
+      font-weight: 700;
+      line-height: 0.95;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      margin-bottom: 1.3rem;
+      text-shadow: 0 2px 32px rgba(138,64,32,0.35);
+    }
+
+    .hero-title .level-num {
+      color: var(--white);
+    }
+
+    .hero-title-wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-title .level-name {
+      display: block;
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 600;
+      color: var(--accent-light);
+      font-size: 0.48em;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 24px rgba(192,144,96,0.3);
+    }
+
+    .hero-rule::before {
+      content: '';
+      display: block;
+      width: clamp(4rem, 12vw, 8rem);
+      height: 1px;
+      background: var(--warn);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-sub {
+      max-width: 56ch;
+      font-family: var(--sans);
+    }
+
+    .hero-sub .hero-sub-tag {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--warn);
+      margin-bottom: 0.6rem;
+    }
+
+    .hero-sub .hero-sub-line {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+      font-weight: 500;
+      color: var(--body);
+      font-style: italic;
+      line-height: 1.45;
+    }
+
+    .hero-sub .hero-sub-line em {
+      color: var(--accent-light);
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 6vw, 3rem);
+    }
+
+    section {
+      padding: 4rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-of-type { border-bottom: none; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.55rem, 3.2vw, 2.15rem);
+      font-weight: 600;
+      font-style: italic;
+      letter-spacing: 0;
+      color: var(--accent-light);
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    h3:first-child { margin-top: 0; }
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    p strong, .doc strong {
+      font-family: var(--type);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── INFO ROW ── */
+    .info-row {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .info-item { display: flex; flex-direction: column; gap: 0.2rem; }
+
+    .info-item dt {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    .info-item dd {
+      font-size: 0.9rem;
+      color: var(--accent-light);
+      font-family: var(--sans);
+    }
+
+    /* ── ESTÁGIOS ── */
+    .stage {
+      border: 1px solid var(--border);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1px;
+      position: relative;
+      background: var(--paper);
+    }
+
+    .stage-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .stage-time {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .stage-title {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    /* cores por estágio */
+    .stage-1 { border-left: 3px solid #607080; }
+    .stage-1 .stage-time { color: #607080; }
+    .stage-1 .stage-title { color: #a0b8c8; }
+
+    .stage-2 { border-left: 3px solid #8a7830; }
+    .stage-2 .stage-time { color: #8a7830; }
+    .stage-2 .stage-title { color: #c0a840; }
+
+    .stage-3 { border-left: 3px solid #8a5020; }
+    .stage-3 .stage-time { color: #8a5020; }
+    .stage-3 .stage-title { color: #c07030; }
+
+    .stage-4 { border-left: 3px solid #8a2820; }
+    .stage-4 .stage-time { color: #8a2820; }
+    .stage-4 .stage-title { color: #c04030; }
+
+    .stage-5 { border-left: 3px solid #5a1010; }
+    .stage-5 .stage-time { color: #5a1010; }
+    .stage-5 .stage-title { color: #902020; }
+
+    .stage-6 { border-left: 3px solid #3a0808; }
+    .stage-6 .stage-time { color: #3a0808; }
+    .stage-6 .stage-title { color: #601010; }
+
+    /* ── DOC ── */
+    .doc {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      margin: 1.5rem 0;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .doc-header {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .doc p { margin-bottom: 0.8rem; }
+    .doc p:last-child { margin-bottom: 0; }
+
+    /* ── AVISO ── */
+    .warning {
+      background: #100a04;
+      border: 1px solid #3a2010;
+      border-left: 3px solid var(--warn);
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .warning::before {
+      content: '▲';
+      color: var(--warn);
+      flex-shrink: 0;
+    }
+
+    /* ── ANTÍDOTO ── */
+    .antidote {
+      background: #060e06;
+      border: 1px solid #1a3a1a;
+      border-left: 3px solid #3a7a3a;
+      padding: 1.5rem 1.8rem;
+      margin: 1.5rem 0;
+    }
+
+    .antidote-label {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #3a7a3a;
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ── NAV ── */
+    .level-nav {
+      display: flex;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .nav-btn {
+      flex: 1;
+      background: var(--paper);
+      padding: 1rem;
+      text-align: center;
+      text-decoration: none;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+      transition: background 0.2s, color 0.2s;
+      display: block;
+    }
+
+    .nav-btn.active {
+      background: var(--muted);
+      color: var(--accent-light);
+    }
+
+    .nav-btn:hover:not(.active) {
+      background: var(--muted);
+      color: var(--accent);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 580px) {
+      .info-row { flex-direction: column; gap: 0.8rem; }
+      .level-nav { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-bg"></div>
+
+    <div class="status-bar">
+      <div class="dot"></div>
+      Perigo Extremo — Classe 5
+    </div>
+
+    <p class="hero-eyebrow">Arquivo M.E.G · Classificação: Extremo Risco</p>
+    <div class="hero-title-wrap">
+      <h1 class="hero-title">
+        <span class="level-num">Nível −8</span>
+        <span class="level-name">Fracture</span>
+      </h1>
+    </div>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">
+      <span class="hero-sub-tag">−8 · Fracture</span>
+      <span class="hero-sub-line">Não há monstros por aqui — <em>o nível os cria.</em></span>
+    </p>
+  </header>
+
+  <div class="container">
+
+    <div class="level-nav" style="margin-top:2.5rem;">
+      <a href="fracture-visao-geral.html" class="nav-btn active">Visão Geral</a>
+      <a href="fracture-relatorios.html" class="nav-btn">Relatórios · Ao Vivo</a>
+    </div>
+
+    <!-- VISÃO GERAL -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Visão Geral</span>
+        <h2>Um nível que quebra quem entra</h2>
+      </div>
+
+      <dl class="info-row">
+        <div class="info-item">
+          <dt>Classificação</dt>
+          <dd>Classe 5 — Perigo Extremo</dd>
+        </div>
+        <div class="info-item">
+          <dt>Expedição inicial</dt>
+          <dd>8 soldados M.E.G</dd>
+        </div>
+        <div class="info-item">
+          <dt>Sobreviventes confirmados</dt>
+          <dd>1 — status: ativo</dd>
+        </div>
+        <div class="info-item">
+          <dt>Antídoto conhecido</dt>
+          <dd>Água de amêndoas — local</dd>
+        </div>
+      </dl>
+
+      <p style="margin-top:1.5rem;">O Nível -8, designado internamente como <em>Fracture</em>, é uma região extensa e ainda pouco mapeada das Backrooms. Aparência inicial não apresenta anomalias visíveis. A ameaça primária do nível não é externa — é o que ele faz com a mente de quem permanece nele.</p>
+
+      <p>Uma equipe de 8 soldados da M.E.G foi enviada para exploração inicial. Os relatórios recebidos documentam a deterioração progressiva do grupo. Apenas um soldado permanece em contato.</p>
+
+      <div class="warning">
+        Os demais membros da equipe original são considerados hostis. Eles estabeleceram zonas de controle no nível e atacam qualquer novo entrante. Entrada no Nível -8 é formalmente desaconselhada até nova ordem.
+      </div>
+    </section>
+
+    <!-- AMBIENTE -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Ambiente</span>
+        <h2>Uma floresta bonita demais para ser confiável</h2>
+      </div>
+
+      <p>A entrada do Nível -8 é uma floresta densa, com espécies que vão de carvalhos a árvores de clima tropical convivendo lado a lado sem nenhuma lógica botânica aparente. Todas elas se mantêm permanentemente verdes e "novas" — como se cada árvore tivesse parado no seu próprio ápice de vida e nunca mais envelhecido. Não há folhas secas acumuladas no chão, nem galhos caídos apodrecendo.</p>
+
+      <p>As árvores frutíferas chamam atenção pela aparência impecável — frutos que dão água na boca de tão bem formados. <strong style="color:var(--accent-light);">Todo o material orgânico comestível do nível é tóxico.</strong> Não há registro de exceções conhecidas.</p>
+
+      <p>A luz que entra pela copa não parece vir de um sol específico — é difusa e uniforme. Não há vento perceptível, mas as folhas se mexem sozinhas, sem motivo aparente. O silêncio incomoda mais do que qualquer som: sem pássaros, sem insetos, só os passos de quem está ali.</p>
+
+      <div class="doc">
+        <div class="doc-header">Observação — degradação progressiva do ambiente</div>
+        <p>Quanto mais tempo um indivíduo passa exposto ao nível, mais a floresta ao redor dele aparenta se deteriorar — fica mais escura, mais densa, mais fechada, mesmo durante os períodos de claridade. Relatos descrevem ventos audíveis que não deveriam existir, sombras se movendo entre as árvores e a sensação — às vezes a confirmação visual — de olhos observando da escuridão.</p>
+        <p style="color:var(--dim); font-style:italic;">Não está confirmado se essa degradação é real e permanente ou se é uma percepção individual ligada ao estado mental de quem observa. Mais de um indivíduo já relatou perceber o mesmo trecho de floresta de formas diferentes.</p>
+      </div>
+
+      <h3 style="margin-top:2.5rem;">Ciclo diário</h3>
+      <p>O Nível -8 possui um ciclo de dia e noite anormalmente rápido — em média entre <strong style="color:var(--accent-light);">3 e 4 horas</strong> por ciclo completo, medido pelo relógio do observador e não por qualquer referência interna do nível. O período noturno dura entre 1 e 2 horas dentro desse ciclo. Não há explicação para a velocidade do ciclo. É justamente durante a noite que os fenômenos auditivos (vozes, sussurros) são relatados com mais intensidade.</p>
+
+      <h3>Entradas e saídas</h3>
+      <p>A entrada documentada ocorre por níveis de acesso padrão. Existe também uma entrada alternativa não confiável pelo <strong style="color:var(--accent-light);">Nível -7</strong>, dentro de uma floresta de carvalhos — sobreviventes relatam que, ocasionalmente, surge ali uma passagem brilhante na escuridão que leva diretamente ao -8.</p>
+      <p style="color:var(--dim); font-style:italic;">Uma saída confirmada e estável não foi documentada até o momento.</p>
+    </section>
+
+    <!-- ESTÁGIOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Deterioração Mental</span>
+        <h2>Estágios documentados por hora de exposição</h2>
+      </div>
+
+      <p style="margin-bottom:1.5rem;">A deterioração é progressiva e consistente entre todos os indivíduos expostos. A velocidade pode variar conforme a sanidade prévia do indivíduo.</p>
+
+      <div class="stage stage-1">
+        <div class="stage-header">
+          <span class="stage-time">Hora 1</span>
+          <span class="stage-title">Desconforto</span>
+        </div>
+        <p>O indivíduo passa a sentir a própria roupa incomodamente apertada — mesmo sendo uma peça já usada sem problema em outros níveis anteriormente. O desconforto físico é leve mas constante, e funciona como o gatilho inicial que conduz, pouco a pouco, ao próximo estágio.</p>
+      </div>
+
+      <div class="stage stage-2">
+        <div class="stage-header">
+          <span class="stage-time">Hora 2</span>
+          <span class="stage-title">Raiva / falta de paciência</span>
+        </div>
+        <p>Respostas mais ríspidas e secas, inclusive a perguntas genuínas que passam a ser vistas como bobas ou idiotas. Tolerância cada vez menor a piadas ou qualquer tentativa de aliviar o clima — que vai pesando sem que o grupo perceba o motivo.</p>
+      </div>
+
+      <div class="stage stage-3">
+        <div class="stage-header">
+          <span class="stage-time">Hora 3</span>
+          <span class="stage-title">Agressão "delicada"</span>
+        </div>
+        <p>O grupo começa a ficar agressivo aos poucos — de início apenas tapas leves, facilmente disfarçados de brincadeira. Mas a tolerância já caiu o suficiente para que essas "brincadeiras" estressem ainda mais quem as recebe, escalando gradualmente de tapas leves a socos com mais força.</p>
+      </div>
+
+      <div class="stage stage-4">
+        <div class="stage-header">
+          <span class="stage-time">Hora 4</span>
+          <span class="stage-title">Paranoia</span>
+        </div>
+        <p>Convicção de que os colegas falam mal pelas costas, somada a sussurros sem frases identificáveis que reforçam essa crença — alguns chegam a acreditar que os outros planejam matá-los. Olhares neutros passam a ser lidos como julgamento ou intimidação. Pequenas faltas de recursos — geradas pelo consumo normal — são interpretadas como roubo. Brigas antigas, de dias atrás ou até de outros níveis, são remoídas mentalmente e podem ser recriadas, desta vez com agressão contra quem participou da discussão original. Os sussurros passam a chamar para o meio da mata durante a noite. O grupo desconfia de sabotagem nos mapas, mas evita demonstrar isso abertamente — mesmo com o próprio corpo entregando a desconfiança em olhares constantes para os lados e inquietação.</p>
+      </div>
+
+      <div class="stage stage-5">
+        <div class="stage-header">
+          <span class="stage-time">Hora 5</span>
+          <span class="stage-title">Autossabotagem</span>
+        </div>
+        <p>O estado mental já está instável o suficiente para que o indivíduo sabote a própria equipe — apagar o fogo durante a noite para "congelar" os companheiros, provocar acidentes propositalmente. Cresce a vontade de isolamento na mata, com a formação de pequenos grupos que também acabam se separando entre si. Surgem pensamentos suicidas e o questionamento se vale a pena continuar vivo. As vozes incentivam atrocidades já cogitadas anteriormente, contra si mesmo ou contra a equipe — e passam a ser sentidas como presença real, como amigos imaginários em quem o indivíduo confia mais do que nas pessoas ao seu redor.</p>
+      </div>
+
+      <div class="stage stage-5">
+        <div class="stage-header">
+          <span class="stage-time">Hora 6</span>
+          <span class="stage-title">Ataques constantes</span>
+        </div>
+        <p>O que começou com tapas e socos fracos evolui para emboscadas — geralmente em dupla, contra alguém que se afastou após uma discussão ou foi explorar sozinho. Os ataques são feitos com força e ódio reais, induzidos por vozes que relembram (e distorcem) memórias específicas: situações em que a vítima supostamente incomodou ou silenciou o agressor no passado. Na maioria dos casos não resulta em morte, mas a vítima pode estar suficientemente "anestesiada" pela voz para se tornar agressiva o bastante para matar qualquer um que cruze o caminho.</p>
+      </div>
+
+      <div class="stage stage-6">
+        <div class="stage-header">
+          <span class="stage-time">Hora 7+</span>
+          <span class="stage-title">Canibalismo</span>
+        </div>
+        <p>A deterioração atinge o ponto em que até a presença de companheiros próximos passa a ser lida como sabotagem, reforçada por vozes que insistem que aquela pessoa é "um peso inútil" consumindo recursos. Após o primeiro assassinato — de um companheiro ou de um sobrevivente que apenas cruzou o nível — a ingestão da carne humana revela aos sobreviventes que não é como "diziam". A carne passa a substituir parte dos suprimentos originais, justificada como mais "saborosa" e farta — mas, na prática, a verdadeira motivação é um sadismo que tomou o lugar do raciocínio: o sofrimento alheio passa a ser o que realmente os satisfaz, ainda que nunca admitam isso abertamente. A partir deste estágio o comportamento se torna permanente — eles estabelecem campos de extermínio e caçam qualquer novo entrante como ameaça ao próprio estoque.</p>
+      </div>
+
+    </section>
+
+    <!-- AS VOZES -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Fenômeno não confirmado</span>
+        <h2>As vozes</h2>
+      </div>
+
+      <p>Todos os soldados da expedição relataram ouvir vozes internas que escalaram em intensidade conforme o tempo de exposição ao nível. A natureza dessas vozes permanece sem explicação oficial.</p>
+
+      <div class="doc">
+        <div class="doc-header">Hipóteses em análise — uso interno M.E.G</div>
+        <p><strong style="color:var(--accent-light);">Hipótese A — Indução externa:</strong> O nível possui alguma propriedade ativa que estimula deterioração psicológica intencional. As vozes seriam geradas pelo ambiente.</p>
+        <p><strong style="color:var(--accent-light);">Hipótese B — Deterioração interna:</strong> A mente dos indivíduos se fragmenta sob condições desconhecidas do nível. As vozes seriam projeções dos próprios pensamentos amplificados.</p>
+        <p style="color:var(--dim); font-style:italic;">Nenhuma hipótese foi confirmada. O único sobrevivente em contato não consegue determinar se as vozes eram externas ou internas.</p>
+      </div>
+    </section>
+
+    <!-- ANTÍDOTO -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Cura conhecida</span>
+        <h2>Água de amêndoas</h2>
+      </div>
+
+      <p>Descoberta acidentalmente pelo único sobrevivente da expedição durante um momento de sede extrema e sanidade já reduzida. O efeito foi imediato — descrito como "clarear a mente completamente", semelhante a uma anestesia revertendo de forma instantânea, trazendo de volta memórias recentes com clareza total.</p>
+
+      <div class="antidote">
+        <span class="antidote-label">⚠ Especificação crítica</span>
+        <p>A água de amêndoas que funciona como antídoto é específica do Nível -8. Água de amêndoas encontrada em outros níveis não apresenta o mesmo efeito.</p>
+      </div>
+
+      <h3>Origem e disponibilidade</h3>
+      <p>As garrafas chegam ao nível através de quedas aéreas ("air-drops") — caixotes que caem do céu em pontos aleatórios, contendo entre <strong style="color:var(--accent-light);">3 e 5 garrafas</strong> cada. Não há padrão conhecido de intervalo entre as quedas. A densidade da floresta torna o som da queda quase sempre inaudível, o que dificulta ainda mais localizar os caixotes antes que outra coisa os encontre primeiro — ou que ninguém os encontre.</p>
+
+      <p>O sobrevivente tentou oferecer a água aos demais membros da equipe após o clareamento. Todos recusaram ou reagiram com hostilidade — a paranoia já havia avançado além do ponto em que a cooperação era possível.</p>
+
+      <div class="warning">
+        A solução estava disponível. A deterioração mental impedia que eles a aceitassem. Esta é a principal característica do Nível -8 — a cura existe mas o nível garante que você não consiga usá-la a tempo.
+      </div>
+    </section>
+
+    <!-- SOLDADOS PERDIDOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Status da equipe</span>
+        <h2>Os soldados perdidos</h2>
+      </div>
+
+      <p>Dos oito membros da expedição #008-F, sete permanecem no nível em estado avançado de deterioração e são classificados como hostis. Identificação mantida com base nos últimos relatórios recebidos:</p>
+
+      <div class="doc">
+        <div class="doc-header">Expedição #008-F — Roster</div>
+        <p><strong style="color:var(--accent-light);">Mateus</strong> — único em contato ativo com a M.E.G. Status: sobrevivente, isolado.</p>
+        <p><strong style="color:var(--accent-light);">João</strong> — líder original da expedição. Perdeu o controle do grupo nos primeiros dias.</p>
+        <p><strong style="color:var(--accent-light);">Bruno</strong> e <strong style="color:var(--accent-light);">Diego</strong> — primeiros a demonstrar comportamento agressivo direcionado.</p>
+        <p><strong style="color:var(--accent-light);">Pedro</strong> e <strong style="color:var(--accent-light);">Carlos</strong> — formaram subgrupo isolado do restante da equipe.</p>
+        <p><strong style="color:var(--accent-light);">Rafa</strong> e <strong style="color:var(--accent-light);">Gabi</strong> — afastaram-se do grupo principal e entre si.</p>
+        <p style="color:var(--dim); font-style:italic;">Todos os sete são considerados perigosos. Patrulham o território em duplas alternadas e atacam qualquer pessoa, conhecida ou não, que cruze o caminho deles.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    M.E.G — Arquivos de Campo &nbsp;·&nbsp; Nível −8 · Fracture &nbsp;·&nbsp; Alto Secreto
+  </footer>
+
+</body>
+</html>
