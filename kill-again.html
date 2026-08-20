@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23c8303a'>Ω</text></svg>">
+  <title>Ω Nível −1008 — "Kill Again"</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=Archivo:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap');
+
+    :root {
+      --bg: #0a0606;
+      --paper: #0e0909;
+      --muted: #150d0d;
+      --border: #2c1616;
+      --dim: #4a2424;
+      --body: #ab8f8f;
+      --blood: #7a1520;
+      --blood-light: #c8303a;
+      --void: #3d1450;
+      --void-light: #8a4ac0;
+      --white: #e2c9c9;
+      --mono: 'Share Tech Mono', monospace;
+      --serif: 'Cormorant Garamond', serif;
+      --sans: 'Archivo', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    ::selection { background: var(--blood); color: var(--white); }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: var(--sans);
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.045;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    a { color: inherit; }
+    :focus-visible { outline: 1px solid var(--blood-light); outline-offset: 3px; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 clamp(1.5rem, 6vw, 6rem) clamp(3rem, 8vh, 5rem);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 45% at 68% 22%, rgba(122,21,32,0.20) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 40% at 12% 88%, rgba(61,20,80,0.24) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .hero-sigil {
+      position: absolute;
+      top: 50%;
+      right: -4vw;
+      transform: translateY(-50%);
+      font-family: var(--serif);
+      font-size: clamp(18rem, 40vw, 32rem);
+      font-weight: 600;
+      color: var(--void);
+      opacity: 0.06;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .status-bar {
+      position: absolute;
+      top: clamp(1.5rem, 4vh, 3rem);
+      right: clamp(1.5rem, 4vw, 3rem);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: var(--blood-light);
+      text-transform: uppercase;
+    }
+
+    .status-bar .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--blood-light);
+      box-shadow: 0 0 8px var(--blood-light);
+      animation: warn-pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes warn-pulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--blood-light); }
+      50% { opacity: 0.2; box-shadow: none; }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      position: relative;
+      font-family: var(--serif);
+      font-size: clamp(3.6rem, 9.5vw, 7.6rem);
+      font-weight: 700;
+      line-height: 0.95;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      margin-bottom: 1.3rem;
+      text-shadow: 0 2px 32px rgba(122,21,32,0.4);
+    }
+
+    .hero-title-wrap { position: relative; display: inline-block; }
+
+    .hero-title .level-name {
+      display: block;
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 600;
+      color: var(--blood-light);
+      font-size: 0.48em;
+      letter-spacing: 0.01em;
+      text-shadow: 0 0 24px rgba(200,48,58,0.35);
+    }
+
+    .hero-rule {
+      width: clamp(4rem, 12vw, 8rem);
+      height: 1px;
+      background: linear-gradient(90deg, var(--blood-light), var(--void-light));
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-sub { max-width: 56ch; font-family: var(--sans); }
+
+    .hero-sub .hero-sub-tag {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--blood-light);
+      margin-bottom: 0.6rem;
+    }
+
+    .hero-sub .hero-sub-line {
+      display: block;
+      font-family: var(--serif);
+      font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+      font-weight: 500;
+      color: var(--body);
+      font-style: italic;
+      line-height: 1.45;
+    }
+
+    .hero-sub .hero-sub-line em {
+      color: var(--void-light);
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .hero-note {
+      margin-top: 1.2rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 6vw, 3rem);
+    }
+
+    section {
+      padding: 4rem 0 3rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-of-type { border-bottom: none; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.22em;
+      color: var(--dim);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.55rem, 3.2vw, 2.15rem);
+      font-weight: 600;
+      font-style: italic;
+      letter-spacing: 0;
+      color: var(--blood-light);
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--blood);
+      margin-bottom: 0.6rem;
+      margin-top: 2rem;
+    }
+
+    h3:first-child { margin-top: 0; }
+    p { margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    p strong, .doc strong {
+      font-family: var(--mono);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── INFO ROW ── */
+    .info-row {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .info-item { display: flex; flex-direction: column; gap: 0.2rem; }
+
+    .info-item dt {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+    }
+
+    .info-item dd {
+      font-size: 0.9rem;
+      color: var(--blood-light);
+      font-family: var(--sans);
+    }
+
+    /* ── DOC ── */
+    .doc {
+      background: var(--paper);
+      border: 1px solid var(--border);
+      padding: 1.8rem;
+      margin: 1.5rem 0;
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .doc-header {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .doc p { margin-bottom: 0.8rem; }
+    .doc p:last-child { margin-bottom: 0; }
+
+    .doc ul { list-style: none; margin: 1rem 0 0.4rem; }
+    .doc ul li {
+      position: relative;
+      padding-left: 1.3rem;
+      margin-bottom: 0.7rem;
+      font-size: 0.92rem;
+    }
+    .doc ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--dim);
+    }
+    .doc ul li:last-child { margin-bottom: 0; }
+
+    /* ── AVISO ── */
+    .warning {
+      background: #0c0505;
+      border: 1px solid #3a1616;
+      border-left: 3px solid var(--blood-light);
+      padding: 1rem 1.2rem;
+      margin: 1.5rem 0;
+      font-size: 0.88rem;
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .warning::before { content: '▲'; color: var(--blood-light); flex-shrink: 0; }
+
+    /* ── DUALIDADE (signature) ── */
+    .duality { margin: 2.2rem 0 0.4rem; }
+
+    .duality-labels {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.7rem;
+    }
+
+    .duality-labels .human { color: var(--blood-light); }
+    .duality-labels .entity { color: var(--void-light); }
+
+    .duality-track {
+      position: relative;
+      height: 5px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--blood) 0%, var(--border) 46%, var(--border) 54%, var(--void) 100%);
+    }
+
+    .duality-marker {
+      position: absolute;
+      top: 50%;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--white);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 10px rgba(226,201,201,0.7);
+      animation: duality-drift 7s ease-in-out infinite;
+    }
+
+    @keyframes duality-drift {
+      0%, 100% { left: 43%; }
+      50% { left: 58%; }
+    }
+
+    .duality-caption {
+      margin-top: 1rem;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+      color: var(--dim);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* ── SINAIS (stages) ── */
+    .stage {
+      border: 1px solid var(--border);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1px;
+      position: relative;
+      background: var(--paper);
+    }
+
+    .stage-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .stage-time {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .stage-title {
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+    }
+
+    /* gradiente humano → entidade conforme os sinais se intensificam */
+    .stage-1 { border-left: 3px solid #4a5a68; }
+    .stage-1 .stage-time { color: #4a5a68; }
+    .stage-1 .stage-title { color: #8a9aa8; }
+
+    .stage-2 { border-left: 3px solid #7a5030; }
+    .stage-2 .stage-time { color: #7a5030; }
+    .stage-2 .stage-title { color: #b88050; }
+
+    .stage-3 { border-left: 3px solid #8a3020; }
+    .stage-3 .stage-time { color: #8a3020; }
+    .stage-3 .stage-title { color: #c05838; }
+
+    .stage-4 { border-left: 3px solid var(--blood); }
+    .stage-4 .stage-time { color: var(--blood); }
+    .stage-4 .stage-title { color: var(--blood-light); }
+
+    .stage-5 { border-left: 3px solid #641a48; }
+    .stage-5 .stage-time { color: #641a48; }
+    .stage-5 .stage-title { color: #a03a78; }
+
+    .stage-6 { border-left: 3px solid var(--void); }
+    .stage-6 .stage-time { color: var(--void); }
+    .stage-6 .stage-title { color: var(--void-light); }
+
+    /* ── REGRAS ── */
+    .rules { list-style: none; counter-reset: rule; margin: 1.5rem 0; }
+
+    .rules li {
+      counter-increment: rule;
+      position: relative;
+      padding: 1.1rem 0 1.1rem 3.2rem;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .rules li:last-child { border-bottom: none; }
+
+    .rules li::before {
+      content: counter(rule, decimal-leading-zero);
+      position: absolute;
+      left: 0;
+      top: 1.1rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--blood-light);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── AVISTAMENTOS (signature) ── */
+    .sightings {
+      margin: 1.5rem 0;
+      border: 1px solid var(--border);
+      background: var(--paper);
+    }
+
+    .sighting { padding: 1.3rem 1.6rem; border-bottom: 1px solid var(--border); }
+    .sighting:last-child { border-bottom: none; }
+
+    .sighting-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 0.6rem;
+    }
+
+    .sighting-meta .status-live {
+      color: var(--blood-light);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .sighting-meta .status-live::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--blood-light);
+      box-shadow: 0 0 6px var(--blood-light);
+      animation: warn-pulse 2.4s ease-in-out infinite;
+    }
+
+    .sighting p { font-family: var(--sans); font-size: 0.92rem; color: var(--body); margin-bottom: 0; }
+
+    .sighting.c1 p { opacity: 0.78; }
+    .sighting.c2 p { opacity: 0.56; letter-spacing: 0.015em; }
+    .sighting.c3 { text-align: center; }
+    .sighting.c3 p {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--dim);
+      opacity: 0.7;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 3rem 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      text-transform: uppercase;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 580px) {
+      .info-row { flex-direction: column; gap: 0.8rem; }
+      .hero-sigil { display: none; }
+      .sighting-meta { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-sigil" aria-hidden="true">Ω</div>
+
+    <div class="status-bar">
+      <div class="dot"></div>
+      Ameaça Ativa — Classe Ω
+    </div>
+
+    <p class="hero-eyebrow">Arquivo M.E.G · Classificação: Risco Existencial</p>
+    <div class="hero-title-wrap">
+      <h1 class="hero-title">
+        <span class="level-num">Nível −1008</span>
+        <span class="level-name">Kill Again</span>
+      </h1>
+    </div>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">
+      <span class="hero-sub-tag">−1008 · Kill Again</span>
+      <span class="hero-sub-line">Frank Miller não mora no Nível −1008. <em>O Nível −1008 é o que sobrou dele.</em></span>
+    </p>
+    <p class="hero-note">Nenhuma equipe retornou completa o suficiente para fechar este relatório.</p>
+  </header>
+
+  <div class="container">
+
+    <!-- VISÃO GERAL -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Visão Geral</span>
+        <h2>Um assassino que talvez nunca tenha sido humano</h2>
+      </div>
+
+      <dl class="info-row">
+        <div class="info-item">
+          <dt>Classificação</dt>
+          <dd>Classe Ω — Risco Existencial</dd>
+        </div>
+        <div class="info-item">
+          <dt>Expedições enviadas</dt>
+          <dd>4 — M.E.G</dd>
+        </div>
+        <div class="info-item">
+          <dt>Sobreviventes confirmados</dt>
+          <dd>0</dd>
+        </div>
+        <div class="info-item">
+          <dt>Contenção conhecida</dt>
+          <dd>Nenhuma</dd>
+        </div>
+        <div class="info-item">
+          <dt>Registro aberto desde</dt>
+          <dd>Expedição 001 — data suprimida</dd>
+        </div>
+        <div class="info-item">
+          <dt>Consultores ativos</dt>
+          <dd>2 — sob protocolo de rotatividade</dd>
+        </div>
+      </dl>
+
+      <p style="margin-top:1.5rem;">O Nível −1008 é registrado internamente como <em>Kill Again</em>, nome retirado de uma marca repetida em quase toda cena documentada dentro do nível. Fisicamente, é uma extensão urbana degradada — ruas, becos e fachadas de comércio fechado, presas num entardecer que nunca termina de escurecer nem de clarear. Não há como saber, só olhando o céu, se já se passaram vinte minutos ou vinte horas ali dentro.</p>
+
+      <p>O nome não foi escolhido pela M.E.G. Ele foi encontrado assim, escrito à mão no verso do único mapa recuperado da Expedição 001 — um mapa que, segundo o relatório de recuperação, não corresponde a nenhuma rua real dentro do perímetro documentado. Desde então, "Kill Again" deixou de ser apenas um nome de arquivo e passou a ser tratado, internamente, como parte do próprio fenômeno.</p>
+
+      <p>A ameaça primária do nível tem nome: <strong style="color:var(--blood-light);">Frank Miller</strong>. É o único identificador consistente entre os relatos recebidos — grafitado em paredes, sussurrado por sobreviventes de curto prazo, repetido em transmissões de rádio que ninguém consegue sintonizar de propósito. Nenhuma das quatro expedições documentou sua origem. Nenhuma voltou inteira.</p>
+
+      <div class="doc">
+        <div class="doc-header">Primeiro contato — resumo do incidente de descoberta</div>
+        <p>O Nível −1008 foi localizado após o desaparecimento de uma equipe de reconhecimento que, a princípio, não fazia parte de nenhum protocolo M.E.G. Três semanas depois, um rádio identificado como pertencente a essa equipe voltou a transmitir — sozinho, sem operador, num canal que havia sido desativado antes mesmo do desaparecimento ser registrado.</p>
+        <p>A gravação recuperada desse rádio dura 47 segundos. Contém passos, a batida descrita adiante neste relatório, e uma frase, repetida três vezes, atribuída a uma voz não identificada entre os membros da equipe original.</p>
+        <p style="color:var(--dim); font-style:italic;">O conteúdo da frase é classificado. Consultores autorizados podem solicitar acesso mediante justificativa formal.</p>
+      </div>
+
+      <div class="warning">
+        Frank Miller nunca foi filmado por completo. Toda gravação recuperada até hoje corta, falha ou termina antes do contato direto. Entrada no Nível −1008 é formalmente desaconselhada em qualquer circunstância.
+      </div>
+    </section>
+
+    <!-- AMBIENTE -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Ambiente</span>
+        <h2>Uma cidade parada no mesmo entardecer</h2>
+      </div>
+
+      <p>As ruas do Nível −1008 lembram um bairro comercial de qualquer cidade média — lojas fechadas, fiação exposta, poças que nunca secam. A diferença é que nada ali envelhece direito: o sangue encontrado nas cenas de ataque não escurece nem seca no prazo esperado, e as marcas grafitadas com as iniciais <strong style="color:var(--blood-light);">F.M.</strong> reaparecem em paredes já verificadas como limpas horas antes.</p>
+
+      <p>Mapas feitos por expedições diferentes nunca coincidem — nem em extensão, nem em traçado, nem no número de quarteirões percorridos até o primeiro sinal de contato. A hipótese mais aceita entre os consultores da M.E.G é a de que o Nível −1008 não tem um layout fixo: ele se reconstrói, ou é reconstruído, entre uma visita e outra, mantendo apenas alguns pontos fixos. Entre eles, uma farmácia de esquina que aparece nos quatro relatos, sempre fechada, sempre no mesmo estado de deterioração.</p>
+
+      <p>Não há vento perceptível, mas placas soltas balançam e luzes de poste piscam num ritmo — sempre o mesmo ritmo, como se estivessem sincronizadas a uma batida que ninguém consegue localizar. Quanto mais tempo um indivíduo permanece no nível, mais essa batida ganha definição, até se tornar audível mesmo sem nenhuma fonte sonora visível nas proximidades.</p>
+
+      <div class="doc">
+        <div class="doc-header">Observação — o som</div>
+        <p>Todos os gravadores levados para dentro do Nível −1008 captam apenas silêncio nos trechos em que os soldados relatam ouvir a batida claramente. O fenômeno não é registrável por equipamento — apenas por quem está fisicamente presente.</p>
+        <p style="color:var(--dim); font-style:italic;">Não está confirmado se o som é parte do ambiente ou se é o próprio Frank Miller se aproximando.</p>
+      </div>
+
+      <div class="doc">
+        <div class="doc-header">Ponto fixo recorrente — a farmácia</div>
+        <p>Presente nos quatro relatos recuperados, sempre descrita da mesma forma: vitrine trincada, luz de emergência piscando atrás do balcão, porta destrancada mas nunca aberta por nenhum membro de equipe registrado. Nenhuma expedição relatou ter entrado.</p>
+        <p>É na parede lateral dessa farmácia que a marca "F.M." é encontrada com mais frequência — e é o único local onde duas expedições diferentes, em datas diferentes, descreveram a marca exatamente na mesma posição, com a mesma inclinação de traço.</p>
+      </div>
+    </section>
+
+    <!-- ORIGEM E TEORIAS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Investigação interna</span>
+        <h2>De onde isso veio, se é que veio de algum lugar</h2>
+      </div>
+
+      <p>Não existe, até o momento, nenhum registro anterior à Expedição 001 que mencione o Nível −1008, Frank Miller, ou qualquer nome associado a ele. Isso, por si só, é tratado como anômalo dentro da M.E.G — a maioria dos níveis catalogados aparece em ao menos um relato anterior à sua descoberta oficial, mesmo que fragmentado. Este não aparece em nenhum.</p>
+
+      <div class="doc">
+        <div class="doc-header">Teorias em circulação — não oficiais</div>
+        <p><strong style="color:var(--blood-light);">Teoria do nome emprestado:</strong> "Frank Miller" não seria um nome próprio, mas um espaço vazio preenchido pela mente de quem está prestes a ser encontrado — o primeiro nome comum que a vítima consegue pensar, atribuído retroativamente ao que a persegue.</p>
+        <p><strong style="color:var(--void-light);">Teoria do resíduo:</strong> o Nível −1008 não seria um lugar, mas o que sobra de um evento — um assassinato, ou uma sequência deles, presos em repetição. Frank Miller, nessa leitura, não mataria: ele apenas seria a parte do evento que ainda está acontecendo.</p>
+        <p>Nenhuma teoria explica por que o nível reage a quem entra nele, nem por que a batida muda de intensidade conforme o tempo de permanência aumenta.</p>
+      </div>
+
+      <p style="color:var(--dim); font-style:italic;">A M.E.G não endossa nenhuma teoria acima. Elas são mantidas neste relatório porque, até hoje, nenhuma foi contraditada por evidência de campo.</p>
+    </section>
+
+    <!-- O QUE ELE É -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Fenômeno não confirmado</span>
+        <h2>Assassino ou o quê</h2>
+      </div>
+
+      <p>Os relatos concordam em um ponto: Frank Miller tem forma humana, anda como humano, e é confundido com uma pessoa comum até o momento em que já é tarde demais. É a partir daí que os relatos deixam de concordar. A violência associada a ele — excessiva, ritualizada, sempre acompanhada dos mesmos símbolos repetidos — levanta a hipótese, ainda não confirmada pela M.E.G, de que a forma humana seja apenas fachada.</p>
+
+      <div class="doc">
+        <div class="doc-header">Hipóteses em análise — uso interno M.E.G</div>
+        <p><strong style="color:var(--blood-light);">Hipótese A — Assassino ritualístico humano:</strong> um indivíduo humano usa encenação, símbolos e repetição deliberada para parecer mais do que é. A violência é real e a origem, mundana — o restante é performance.</p>
+        <p><strong style="color:var(--void-light);">Hipótese B — Entidade não-humana:</strong> a forma humana é um disfarce funcional, não uma identidade. A violência não é o objetivo de Frank Miller — é apenas o que sobra quando algo daquela natureza atravessa a nossa.</p>
+        <p><strong style="color:var(--white);">Hipótese C — Registro, não indivíduo:</strong> proposta após a Expedição 004, sugere que "Frank Miller" não seja nem homem nem entidade, mas a repetição de algo que já aconteceu — um evento passado sendo reencenado indefinidamente, com quem entra no nível preenchendo, sem saber, o papel de uma vítima anterior.</p>
+        <ul>
+          <li>Vítimas encontradas sem sinais de decomposição no prazo esperado para o tempo de exposição registrado.</li>
+          <li>Os símbolos repetidos nas cenas não foram associados a nenhuma tradição ou grupo conhecido por nenhum consultor consultado até hoje.</li>
+          <li>Mais de um sobrevivente relatou uma sombra "maior do que deveria" projetada por ele, mesmo com fonte de luz única e identificada.</li>
+          <li>Nenhuma arma foi recuperada em nenhuma das cenas, apesar da natureza dos ferimentos documentados.</li>
+          <li>Dois sobreviventes de curto prazo, de expedições diferentes, relataram a mesma frase dita por ele — palavra por palavra — sem nunca terem tido contato um com o outro.</li>
+        </ul>
+        <p style="color:var(--dim); font-style:italic;">Nenhuma hipótese foi confirmada nem descartada. A classificação Ω existe justamente porque o nível não se encaixa em nenhuma categoria anterior.</p>
+      </div>
+
+      <div class="duality">
+        <div class="duality-labels">
+          <span class="human">Humano</span>
+          <span class="entity">Entidade</span>
+        </div>
+        <div class="duality-track">
+          <div class="duality-marker"></div>
+        </div>
+        <p class="duality-caption">Consenso interno da M.E.G — recalculado a cada novo relato. Nunca se estabiliza de um lado.</p>
+      </div>
+    </section>
+
+    <!-- SINAIS DE APROXIMAÇÃO -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Deterioração da situação</span>
+        <h2>O que sentir antes de vê-lo</h2>
+      </div>
+
+      <p style="margin-bottom:1.5rem;">Os sinais a seguir foram reconstruídos a partir de transmissões parciais das quatro expedições. A ordem é consistente entre todos os relatos recuperados — o que muda é apenas quanto tempo cada indivíduo leva para passar de um sinal ao seguinte.</p>
+
+      <div class="stage stage-1">
+        <div class="stage-header">
+          <span class="stage-time">Sinal 1</span>
+          <span class="stage-title">Distância</span>
+        </div>
+        <p>A batida citada na seção anterior é ouvida ao longe, quase imperceptível. O restante do ambiente parece normal — becos vazios, lojas fechadas, nada fora do comum além do som que ninguém consegue localizar. Consultores tratam este como o único sinal considerado "seguro" — e, mesmo assim, nenhuma expedição relatou senti-lo por mais de alguns minutos antes de o Sinal 2 começar.</p>
+      </div>
+
+      <div class="stage stage-2">
+        <div class="stage-header">
+          <span class="stage-time">Sinal 2</span>
+          <span class="stage-title">Cheiro</span>
+        </div>
+        <p>Um cheiro metálico, associado a sangue, surge sem fonte visível. Nenhuma mancha é encontrada nas proximidades imediatas — pelo menos não ainda. Dois relatos mencionam o cheiro ficando mais forte perto de superfícies específicas — sempre superfícies que, minutos depois, revelam a marca descrita no sinal seguinte.</p>
+      </div>
+
+      <div class="stage stage-3">
+        <div class="stage-header">
+          <span class="stage-time">Sinal 3</span>
+          <span class="stage-title">Grafite fresco</span>
+        </div>
+        <p>Uma marca "F.M." aparece em uma parede próxima, com tinta ainda molhada ao toque — mesmo em ruas já verificadas como limpas minutos antes por outro membro da equipe. Em nenhum caso registrado a tinta secou antes do fim da transmissão da equipe.</p>
+      </div>
+
+      <div class="stage stage-4">
+        <div class="stage-header">
+          <span class="stage-time">Sinal 4</span>
+          <span class="stage-title">Silêncio</span>
+        </div>
+        <p>Todo som ambiente — inclusive os próprios passos do indivíduo — passa a soar abafado, como ouvido através de uma parede. A batida, em contraste, fica mais nítida do que nunca. Alguns sobreviventes de curto prazo descrevem esta fase como a mais difícil de suportar, não pelo medo direto, mas pela sensação de estar sendo gradualmente removido do próprio ambiente.</p>
+      </div>
+
+      <div class="stage stage-5">
+        <div class="stage-header">
+          <span class="stage-time">Sinal 5</span>
+          <span class="stage-title">Contato visual à distância</span>
+        </div>
+        <p>Ele é avistado longe, sempre andando, nunca correndo. Relatos descrevem uma sensação incomum: ele parece estar de costas até o instante em que, sem nenhum movimento visível de virar, já não está mais. Essa troca nunca foi capturada em nenhum registro de vídeo — apenas relatada, sempre da mesma forma, por observadores diferentes.</p>
+      </div>
+
+      <div class="stage stage-6">
+        <div class="stage-header">
+          <span class="stage-time">Sinal 6</span>
+          <span class="stage-title">Contato</span>
+        </div>
+        <p>Não há relatos de sobreviventes a partir deste ponto. As últimas transmissões conhecidas terminam no meio de uma frase, sem exceção registrada até o momento. O intervalo entre o Sinal 5 e o Sinal 6, quando registrado, nunca ultrapassou noventa segundos.</p>
+      </div>
+
+      <div class="doc">
+        <div class="doc-header">Caso não classificado — relato extraoficial</div>
+        <p>Um relato não confirmado, recebido por canal informal e nunca vinculado a nenhuma das quatro expedições oficiais, descreve uma sequência de sinais que para no Sinal 4 e não avança. Segundo esse relato, a batida eventualmente perde intensidade e desaparece por completo, sem Sinal 5 nem Sinal 6.</p>
+        <p style="color:var(--dim); font-style:italic;">A fonte não pôde ser verificada. Se verdadeiro, seria o único caso conhecido de reversão parcial dentro do Nível −1008.</p>
+      </div>
+    </section>
+
+    <!-- REGRAS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Sobrevivência</span>
+        <h2>Regras registradas por sobreviventes de curto prazo</h2>
+      </div>
+
+      <p>Nenhum antídoto ou método de contenção é conhecido para o Nível −1008. As regras abaixo foram reconstruídas a partir de fragmentos de transmissão e não têm eficácia comprovada — apenas correlação com relatos que duraram mais tempo do que a média.</p>
+
+      <ol class="rules">
+        <li>Se ouvir a batida, não pare de andar — mesmo que pareça estar se afastando dela.</li>
+        <li>Nunca cante, assobie ou marque o ritmo junto. Isso é tratado como resposta.</li>
+        <li>Ao encontrar uma marca "F.M." fresca, mude de rua imediatamente. A marca é sinal de que ele já sabe que você a viu.</li>
+        <li>Não corra ao avistá-lo à distância. Ele nunca corre atrás — apenas passa a andar na sua direção, no mesmo passo de sempre.</li>
+        <li>Se ele parar de andar, o relatório recomendado é o silêncio. Nenhuma ação registrada até hoje reverteu esse momento.</li>
+        <li>Se perder contato visual com outro membro da equipe por mais de alguns segundos, trate-o como não confiável até confirmação. Mais de um relato descreve algo que "voltou parecido, mas não igual".</li>
+        <li>Não tente sair pelo mesmo caminho da entrada. Nenhuma expedição confirmou que o caminho de volta é o mesmo caminho de ida.</li>
+      </ol>
+
+      <div class="warning">
+        Nenhuma das regras acima garante sobrevivência. No melhor dos casos registrados, elas apenas atrasaram o Sinal 6.
+      </div>
+    </section>
+
+    <!-- ARTEFATOS RECUPERADOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Cadeia de custódia</span>
+        <h2>O que voltou, mesmo quando ninguém voltou</h2>
+      </div>
+
+      <p>Nem todo item recuperado do Nível −1008 veio de mãos de um sobrevivente. Alguns objetos simplesmente apareceram do lado de fora do perímetro de entrada, em intervalos irregulares, sem explicação sobre como atravessaram a barreira entre o nível e o exterior.</p>
+
+      <div class="doc">
+        <div class="doc-header">Itens catalogados — amostra</div>
+        <ul>
+          <li>Uma jaqueta rasgada nas costas, identificada por familiares como pertencente a um membro da Expedição 002. O rasgo não corresponde a nenhuma lâmina catalogada pela M.E.G.</li>
+          <li>Um cassete sem rótulo, encontrado a três metros da entrada do Nível −1008. Contém apenas a batida descrita neste relatório, gravada em loop, sem início nem fim identificável.</li>
+          <li>Uma fotografia polaroid, superexposta, mostrando uma silhueta ao fundo de uma rua não identificada. Nenhum membro de nenhuma expedição confirma ter tirado essa fotografia.</li>
+          <li>Uma página solta de caderno, com a frase "ele não corre porque não precisa" escrita repetidamente até preencher a folha inteira. A caligrafia muda sutilmente a cada repetição.</li>
+        </ul>
+      </div>
+
+      <p style="color:var(--dim); font-style:italic;">Todos os itens acima permanecem sob custódia da M.E.G. Nenhum foi autorizado para estudo externo.</p>
+    </section>
+
+    <!-- REGISTRO DE AVISTAMENTOS -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Transmissões parciais</span>
+        <h2>Registro de avistamentos</h2>
+      </div>
+
+      <p>Trechos recuperados das quatro expedições enviadas ao Nível −1008, em ordem de degradação do sinal. Apenas o primeiro foi confirmado por uma segunda fonte independente.</p>
+
+      <div class="sightings">
+        <div class="sighting">
+          <div class="sighting-meta">
+            <span>Expedição 004-K · Última transmissão</span>
+            <span class="status-live">Confirmado — 2ª fonte</span>
+          </div>
+          <p>"A gente tá ouvindo essa batida faz uns dez minutos e eu não sei dizer de onde vem. O [nome redigido] disse que já tinha visto essa mesma rua antes. A gente não tinha visto."</p>
+        </div>
+
+        <div class="sighting c1">
+          <div class="sighting-meta">
+            <span>Expedição 003-H</span>
+            <span>Não confirmado</span>
+          </div>
+          <p>"Achei uma marca nova na parede da farmácia. Tava molhada. A gente tinha passado ali fazia cinco minutos e não tinha nada."</p>
+        </div>
+
+        <div class="sighting c2">
+          <div class="sighting-meta">
+            <span>Expedição 002-R</span>
+            <span>Transmissão interrompida</span>
+          </div>
+          <p>"Ele tá parado no fim da rua. De costas. Eu juro que ele tava de costas. Agora não sei mais—"</p>
+        </div>
+
+        <div class="sighting c3">
+          <p>[ Sinal Perdido — Expedição 001 ]</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERGUNTAS EM ABERTO -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Sem resposta</span>
+        <h2>O que ainda não sabemos</h2>
+      </div>
+
+      <div class="doc">
+        <div class="doc-header">Questões registradas em reuniões de análise — não respondidas</div>
+        <ul>
+          <li>Por que a marca "F.M." nunca foi encontrada em nenhuma superfície vertical de vidro, apenas em alvenaria, madeira e metal?</li>
+          <li>Por que os quatro relatos descrevem exatamente seis sinais — nem mais, nem menos — mesmo sendo registrados por equipes que nunca tiveram contato entre si antes da entrada?</li>
+          <li>Existe alguma relação entre o Nível −1008 e outros níveis de classificação negativa? Nenhum consultor conseguiu confirmar nem descartar.</li>
+          <li>Se "Frank Miller" for, de fato, um nome emprestado, de onde vieram os outros nomes atribuídos a ele em transmissões mais antigas, antes de "Frank Miller" se tornar o nome fixo?</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ANEXO: INCIDENTE ZERO -->
+    <section>
+      <div class="section-header">
+        <span class="section-label">Anexo não catalogado</span>
+        <h2>O que veio antes da Expedição 001</h2>
+      </div>
+
+      <p>Este registro não conta como uma das quatro expedições oficiais da M.E.G ao Nível −1008. Ele é incluído aqui apenas porque, cronologicamente, é o primeiro contato humano documentado com o que hoje chamamos de Kill Again — anterior, inclusive, à própria classificação do nível.</p>
+
+      <div class="sightings">
+        <div class="sighting c3">
+          <div class="sighting-meta">
+            <span>Origem não vinculada · Recuperado de terceiros</span>
+            <span>Não catalogado</span>
+          </div>
+          <p>"Isso não tava em nenhum mapa. A gente só queria um atalho. Agora ninguém mais fala com a [nome redigido] sobre aquela noite. Ela também não fala."</p>
+        </div>
+      </div>
+
+      <p style="color:var(--dim); font-style:italic; margin-top:1.2rem;">Nenhum protocolo de recuperação foi acionado para este incidente. Sua existência só foi confirmada anos depois, quando os primeiros elementos do Nível −1008 começaram a coincidir com esse relato antigo.</p>
+    </section>
+
+  </div>
+
+  <footer>
+    M.E.G — Arquivos de Campo &nbsp;·&nbsp; Nível −9 · Kill Again &nbsp;·&nbsp; Alto Secreto &nbsp;·&nbsp; Ref. Ω−1008/KA
+  </footer>
+
+</body>
+</html>
