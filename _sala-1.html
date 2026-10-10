@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>◬ ...</title>
+<style>
+/* sala.css — base compartilhada. Cada sala só troca as variáveis e o cenário. */
+:root{--texto:#fff8e8;--sombra:rgba(0,0,0,.6);--noite:#111;--grao:.2;--linha:rgba(0,0,0,.1);--vinheta:rgba(0,0,0,.5)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--noite);color:var(--texto);overflow:hidden}
+.fundo{position:fixed;inset:0;overflow:hidden;transition:filter .08s}
+.fundo svg{width:100%;height:100%;display:block}
+body.pulso .fundo{filter:saturate(1.7) contrast(1.2) brightness(1.08)}
+
+.grao{position:fixed;inset:-50%;pointer-events:none;opacity:var(--grao);mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grao .6s steps(4) infinite}
+@keyframes grao{25%{transform:translate(-3%,2%)}50%{transform:translate(2%,-3%)}75%{transform:translate(3%,3%)}}
+.linhas{position:fixed;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(transparent 0 2px,var(--linha) 2px 3px),
+             radial-gradient(ellipse at center,transparent 45%,var(--vinheta) 100%)}
+
+.hud{position:fixed;top:18px;left:20px;right:20px;display:flex;justify-content:space-between;
+  font:15px/1.2 ui-monospace,"Courier New",monospace;text-shadow:0 0 6px var(--sombra)}
+.rec::before{content:"";display:inline-block;width:10px;height:10px;margin-right:8px;border-radius:50%;
+  background:#d9534f;animation:pisca 1.2s steps(2) infinite}
+@keyframes pisca{50%{opacity:0}}
+
+.fala{position:fixed;left:50%;bottom:9vh;transform:translateX(-50%);width:min(620px,88vw);min-height:5.5em;
+  font:italic 22px/1.55 "Times New Roman",Times,serif;text-shadow:0 0 10px var(--sombra),0 0 2px var(--sombra);transition:opacity .5s}
+.fala small{display:block;margin-bottom:.4em;font:13px ui-monospace,"Courier New",monospace;font-style:normal;opacity:.85}
+
+#flash{position:fixed;z-index:4;opacity:0;pointer-events:none;white-space:nowrap;
+  font:italic 40px "Times New Roman",serif;color:var(--flash,#fff);text-shadow:0 0 14px var(--flashSombra,#000)}
+
+#entrada{position:fixed;inset:0;z-index:5;display:grid;place-items:center;text-align:center;background:var(--noite);transition:opacity 2s ease}
+#entrada button{font:20px "Times New Roman",serif;font-style:italic;color:var(--texto);background:none;
+  border:1px solid currentColor;padding:.8em 1.6em;cursor:pointer;opacity:.9}
+#entrada button:focus-visible{outline:3px solid var(--texto);outline-offset:4px}
+#entrada p{margin:1.4em 0 0;font:13px ui-monospace,"Courier New",monospace;opacity:.6}
+#branco{position:fixed;inset:0;z-index:6;opacity:0;pointer-events:none;transition:opacity 4s ease}
+
+@media (prefers-reduced-motion:reduce){.grao,.rec::before{animation:none}}
+
+/* fundo em cores que se movem devagar; as fotos aparecem por cima de vez em quando */
+@keyframes desliza{from{background-position:0% 40%}to{background-position:100% 60%}}
+#foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 2.6s ease;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.fundo{animation:none!important}}
+
+/* painel da história */
+#historia{display:none;position:fixed;left:50%;bottom:5vh;transform:translateX(-50%);width:min(700px,92vw);max-height:64vh;
+  overflow-y:auto;padding:2.2em 1.4em .4em;background:var(--painel,rgba(0,0,0,.3));backdrop-filter:blur(3px);border-radius:8px;
+  font:20px/1.6 "Times New Roman",Times,serif;text-shadow:0 0 8px var(--sombra);scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(transparent 0,#000 16%);mask-image:linear-gradient(transparent 0,#000 16%)}
+#historia::-webkit-scrollbar{display:none}
+#historia p{margin:0 0 1.1em;opacity:0;transition:opacity 1.6s ease}
+#historia p.on{opacity:1}
+#historia p.dest{font-weight:bold;text-align:center;letter-spacing:.1em}
+
+</style>
+<style>
+  /* Sala 1 — branco, rosa-claro, azul-bebê, amarelo-leite. Frio, sem sombra. */
+  :root{--texto:#2f3b66;--sombra:rgba(255,255,255,.9);--noite:#e6eeff;--vinheta:rgba(170,190,250,.55);--linha:rgba(255,255,255,.12);--grao:.12;--flash:#2f3b66;--flashSombra:#fff}
+
+  :root{--painel:rgba(255,255,255,.4)}
+  .fundo{background:radial-gradient(circle at 18% 22%,rgba(255,211,230,.75),transparent 45%),radial-gradient(circle at 82% 30%,rgba(195,227,255,.8),transparent 50%),linear-gradient(180deg,#bcd9ff 0%,#f4efff 55%,#fff1c9 100%);background-size:140% 140%;animation:desliza 45s ease-in-out infinite alternate}
+</style>
+</head>
+<body>
+<div class="fundo"></div>
+<script>
+  window.SALA = {
+    titulo: '◬ ...',
+    aviso: 'Esta sala contém temas pesados, incluindo suicídio.',
+    imagens: ['/img/sala-1.jpg'], // suas fotos em public/img/ (opcional; aparecem de vez em quando)
+    fotoOpacidade: 0.55,
+    audio: '/media/ambiente-1.mp3', // opcional; sem o arquivo, usa o zumbido abaixo
+    zumbido: { freqs: [261.6, 392, 130.8], filtro: 1200, vol: 0.02, lfo: 0.05 },
+    piscar: { texto: 'F.M.', de: 22000, ate: 14000, fator: 0.95 }, // aparece raramente
+    fim: '#ffffff',
+    historia: [">PORTA", "Assim que Thom e Carter chegam ao chão, percebem que há algo escrito na superfície branca, em letras tão perfeitas que parecem nunca ter sido pisadas:", ">5 = ↕", ">1 = ↑", ">3 = ↓", "Nenhum dos dois entende o que aquilo significa. Carter passa a sola da bota por cima das marcas. Elas não borram, não saem, não se mexem.", "O lugar é uma linha branca atravessando um vazio completamente colorido, mas só de cores que parecem ter sido lavadas: rosa quase branco, azul de bebê, amarelos de leite e de manteiga. As nuvens ao redor são brancas demais, redondas demais, todas do mesmo tamanho, como se alguém tivesse desenhado uma só e copiado. Atrás delas existe um céu azul perfeito, daqueles dias de verão da infância em que a gente voltava pra casa com o sol nas costas, achando que ainda dava tempo de brincar. Mas não há sol. O céu é claro e nada, em lugar nenhum, projeta sombra.", "O caminho é enorme e faz curvas longas, tão longas que ele some de vista antes de qualquer fim. Carter o chama de caminho. Thom, sem saber por quê, pensa nele como ponte. Nenhum dos dois corrige o outro.", "Bem ao fundo existem murmúrios, como uma televisão ligada em outro cômodo, mas no começo nenhum dos dois consegue entender o que dizem.", "— Cara... onde a gente foi parar? — Carter olha em volta. — Faz um segundo a gente tava com o grupo. Um segundo.", "Thom está olhando para as nuvens.", "— Por que essas nuvens são tão perfeitas?", "Depois olha para o céu limpo, bonito, e diz que mesmo assim está sentindo frio. Um frio que não devia existir ali, e uma sensação estranha que ele não sabe nomear. Pergunta onde eles vão acabar indo, porque aquilo não parece ter fim.", "— Eu também tô sentindo — Carter admite. — Mas ficar parado é pior. Vamos andar.", "Os dois começam a andar. No início ainda tentam conversar. Carter faz uma piada, Thom ri pelo nariz, e as respostas vão ficando mais curtas até não haver mais respostas. Porque nada muda. As mesmas nuvens, o mesmo céu, o mesmo frio subindo pelos pés, e os passos que não fazem som algum. Thom olha o relógio de pulso e percebe que ele continua marcando o mesmo minuto. Aquele lugar que parecia tranquilo vai se tornando, devagar, completamente infernal, justamente por nunca fazer nada de errado. Eles caminham quase em silêncio, ouvindo apenas os próprios pensamentos.", "Depois de algum tempo, os murmúrios começam a ficar mais altos.", "— Você tá ouvindo isso também? — Carter pergunta.", "— Tô — Thom responde. Era exatamente o que ele temia que o outro dissesse.", "As vozes ficam mais claras e Thom percebe que falam de um nível onde uma criatura mata vários soldados que entram ali. Pouco depois falam de outro, com uma criatura que parece humana, ou talvez seja humana, massacrando pessoas. Falam de um homem. De soldados desaparecendo. De um som metálico que se repete, sempre igual, sempre no mesmo intervalo.", ">F.M.", "Quanto mais eles andam, mais altos ficam as vozes e os pensamentos, até que Thom para por um momento para respirar e fecha os olhos.", "Quando abre, Carter simplesmente sumiu.", "Thom gira para todos os lados, chama o nome dele, e a única resposta vem das vozes. Então olha para baixo da ponte branca. E lá, onde não devia existir nada além de mais cor, está Carter, caindo. Não grita. Ou grita, e o som não chega até ele. Cai devagar demais, como quem já está caindo há muito tempo, talvez desde antes de Thom abrir os olhos, talvez desde antes de os dois chegarem.", "Thom fica em choque, olhando, sem entender como ele foi parar ali nem há quanto tempo estava caindo.", "As vozes sobem ainda mais e os pensamentos dele começam a se misturar com elas. Ele passa a imaginar uma figura demoníaca falando diretamente com ele, chamando-o de lixo humano por ter deixado o amigo morrer, e dizendo que tem medo dele. Mas conforme os minutos passam, Thom começa a perceber que talvez aquela figura nem exista. Talvez o próprio cérebro esteja apenas inventando um rosto para justificar tudo o que ele ouve.", "Mesmo sabendo disso, ele não consegue fazer aquilo parar.", "Quanto mais tenta ignorar, mais perturbadores ficam os pensamentos. As vozes misturam F.M., Carter, os soldados e coisas que ele não consegue distinguir se realmente ouviu ou se foram criadas pela própria mente. Em certo momento, no meio delas, ele ouve a voz de Carter. Não sabe se é real. Tenta chamar de volta e a resposta vem com a sua própria voz, repetindo seu nome.", "Ele se senta no chão branco, que continua frio. Olha para as nuvens e elas continuam iguais. Olha para a arma que a M.E.G. lhe deu e permanece em silêncio por muito tempo.", "Então Thom decide acabar com a própria vida.", "As vozes continuam. Elas nunca precisaram dele para falar.", "A M.E.G. nunca encontrou o paradeiro dos dois, e nenhum dos dois voltou para o grupo.", ">Mas o nível encontrou eles."],
+  };
+</script>
+<script>
+/* sala.js — motor compartilhado. Cada sala define window.SALA antes de carregar este arquivo. */
+(() => {
+  const C = window.SALA, $ = (s) => document.querySelector(s);
+  const espera = (ms) => new Promise((r) => setTimeout(r, ms));
+  const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let acabou = false;
+
+  document.title = C.titulo || '◬ ...';
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="grao"></div><div class="linhas"></div>
+    <div class="hud"><span class="rec">REC &nbsp;<span id="tc">00:00:00</span></span><span id="quem"></span></div>
+    <div class="fala" id="fala" aria-live="polite"></div>
+    <div id="historia"></div>
+    <div id="flash" aria-hidden="true"></div>
+    <div id="entrada"><div><button id="entrar">Entrar</button><p>${C.aviso || ''}</p></div></div>
+    <div id="branco"></div>`);
+
+  // Contador de fita começando num horário aleatório
+  let seg = Math.floor(Math.random() * 20000) + 3600;
+  setInterval(() => {
+    seg++;
+    const p = (n) => String(n % 60).padStart(2, '0');
+    $('#tc').textContent = `${p(Math.floor(seg / 3600))}:${p(Math.floor(seg / 60))}:${p(seg)}`;
+  }, 1000);
+
+  // Áudio: tenta o arquivo da sala; se não existir, usa o zumbido sintético
+  function audio() {
+    if (!C.audio) return zumbido();
+    const a = new Audio(C.audio);
+    a.loop = true; a.volume = 0.5;
+    a.play().catch(zumbido);
+  }
+  function zumbido() {
+    const Z = C.zumbido || {}, ctx = new AudioContext(), master = ctx.createGain(), f = ctx.createBiquadFilter();
+    master.gain.value = Z.vol ?? 0.03;
+    f.type = 'lowpass'; f.frequency.value = Z.filtro ?? 400;
+    (Z.freqs || [55, 55.7, 82.4]).forEach((hz) => { const o = ctx.createOscillator(); o.frequency.value = hz; o.connect(f); o.start(); });
+    const lfo = ctx.createOscillator(), lg = ctx.createGain();
+    lfo.frequency.value = Z.lfo ?? 0.08; lg.gain.value = (Z.filtro ?? 400) * 0.35;
+    lfo.connect(lg); lg.connect(f.frequency); lfo.start();
+    f.connect(master); master.connect(ctx.destination);
+  }
+
+  // Texto que pisca na vista, cada vez mais seguido (nunca mais rápido que ~1,4x por segundo)
+  function piscar() {
+    const P = C.piscar;
+    if (!P || reduz) return;
+    let gap = P.de;
+    (function loop() {
+      setTimeout(() => {
+        if (acabou) return;
+        const f = $('#flash');
+        f.textContent = P.texto;
+        f.style.left = 6 + Math.random() * 65 + 'vw';
+        f.style.top = 12 + Math.random() * 65 + 'vh';
+        f.style.opacity = 1; document.body.classList.add('pulso');
+        setTimeout(() => { f.style.opacity = 0; document.body.classList.remove('pulso'); }, 90);
+        gap = Math.max(P.ate, gap * (P.fator || 0.85));
+        loop();
+      }, gap * (0.7 + Math.random() * 0.6));
+    })();
+  }
+
+  // Suas fotos (public/img/) aparecem de vez em quando por cima da cor. Se o arquivo não existir, é ignorado.
+  async function fotos() {
+    const ok = [];
+    await Promise.all((C.imagens || []).map((src) => new Promise((r) => {
+      const i = new Image(); i.onload = () => { ok.push(src); r(); }; i.onerror = r; i.src = src;
+    })));
+    if (!ok.length) return;
+    const img = document.createElement('img');
+    img.id = 'foto'; img.alt = ''; $('.fundo').appendChild(img);
+    while (!acabou) {
+      await espera(10000 + Math.random() * 20000);
+      if (acabou) return;
+      img.src = ok[Math.floor(Math.random() * ok.length)];
+      img.style.opacity = C.fotoOpacidade ?? 0.55;
+      await espera(3500 + Math.random() * 3000);
+      img.style.opacity = 0;
+      await espera(2700);
+    }
+  }
+
+  // Modo história: parágrafos aparecem um a um num painel que rola (prefixo ">" = destaque)
+  async function historia() {
+    const box = $('#historia');
+    box.style.display = 'block';
+    for (const t of C.historia) {
+      const p = document.createElement('p');
+      if (t.startsWith('>')) { p.className = 'dest'; p.textContent = t.slice(1); } else p.textContent = t;
+      box.appendChild(p);
+      requestAnimationFrame(() => p.classList.add('on'));
+      box.scrollTo({ top: box.scrollHeight, behavior: reduz ? 'auto' : 'smooth' });
+      await espera(1600 + t.length * 38);
+    }
+    await espera(3000);
+  }
+
+  async function digitar(el, txt) {
+    el.textContent = '';
+    for (const c of txt) { el.textContent += c; if (!reduz) await espera(38 + Math.random() * 50); }
+  }
+
+  async function sessao() {
+    const alvo = $('#fala');
+    if (C.historia) await historia();
+    for (const [i, [quem, texto, pausa]] of (C.historia ? [] : C.falas).entries()) {
+      $('#quem').textContent = quem;
+      alvo.innerHTML = `<small>gravação · ${quem}</small><span></span>`;
+      if (C.aoFalar) C.aoFalar(i);
+      await digitar(alvo.querySelector('span'), texto);
+      await espera(pausa);
+      alvo.style.opacity = 0; await espera(600); alvo.style.opacity = 1;
+    }
+    acabou = true;
+    alvo.innerHTML = C.historia ? '' : '<small>fim da gravação</small>';
+    const b = $('#branco');
+    b.style.background = C.fim || '#fff8e8'; b.style.opacity = 1;
+    await espera(5000);
+    location.replace('/'); // a sala deixa de existir
+  }
+
+  // Cosmético: o endereço na barra muda sem parar e nunca mostra o real.
+  // A proteção de verdade é o token de uso único que o Worker confere antes de servir a sala.
+  const hex = () => [...crypto.getRandomValues(new Uint8Array(16))].map((b) => b.toString(16).padStart(2, '0')).join('');
+  const trocarUrl = () => { try { history.replaceState(null, '', '/sala/' + hex()); } catch {} };
+  trocarUrl(); setInterval(trocarUrl, 700);
+
+  $('#entrar').addEventListener('click', () => {
+    audio(); piscar(); fotos();
+    $('#entrada').style.opacity = 0;
+    setTimeout(() => $('#entrada').remove(), 2000);
+    sessao();
+  });
+})();
+
+</script>
+</body>
+</html>
