@@ -22,17 +22,26 @@ const hex = (n) =>
 export async function onRequestPost(context) {
   const { request, env } = context;
   const token = hex(16);
-  const { vistas } = await request.json().catch(() => ({}));
-  const sala = sortear(Array.isArray(vistas) ? vistas : []);
+  let vistas = [];
+  try {
+    const body = await request.json();
+    if (body && Array.isArray(body.vistas)) vistas = body.vistas;
+  } catch {}
+  const sala = sortear(vistas);
 
-  if (env.PORTAS) {
+  if (env && env.PORTAS) {
     try {
       await env.PORTAS.put('t:' + token, sala.id, { expirationTtl: TTL });
     } catch {}
   }
 
-  return Response.json(
-    { url: '/sala/' + token + '?id=' + sala.id, id: sala.id },
-    { headers: { 'cache-control': 'no-store' } }
+  return new Response(
+    JSON.stringify({ url: '/sala/' + token + '?id=' + sala.id, id: sala.id }),
+    {
+      headers: {
+        'content-type': 'application/json',
+        'cache-control': 'no-store',
+      },
+    }
   );
 }

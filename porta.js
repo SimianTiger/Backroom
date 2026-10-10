@@ -48,22 +48,46 @@
     porta.addEventListener('click', async () => {
       clearTimeout(sumir);
       porta.disabled = true;
+
+      let destinoUrl = null;
+      let vistas = [];
+      try { vistas = JSON.parse(localStorage.getItem('portas-vistas') || '[]'); } catch {}
+
       try {
-        let vistas = [];
-        try { vistas = JSON.parse(localStorage.getItem('portas-vistas') || '[]'); } catch {}
-        const r = await fetch('/api/porta', { method: 'POST', body: JSON.stringify({ vistas }) });
-        if (!r.ok) throw new Error();
-        const { url, id } = await r.json();
-        try { localStorage.setItem('portas-vistas', JSON.stringify([...new Set([...vistas, id])])); } catch {}
-        const flash = document.createElement('div');
-        flash.className = 'porta-flash';
-        document.body.appendChild(flash);
-        requestAnimationFrame(() => (flash.style.opacity = 1));
-        setTimeout(() => (location.href = url), 1000);
-      } catch {
-        porta.remove(); // a porta simplesmente deixa de existir
-        if (O.repetir) agendar();
+        const r = await fetch('/api/porta', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ vistas })
+        });
+        if (r.ok) {
+          const data = await r.json();
+          if (data && data.url) {
+            destinoUrl = data.url;
+            if (data.id) {
+              try { localStorage.setItem('portas-vistas', JSON.stringify([...new Set([...vistas, data.id])])); } catch {}
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Endpoint /api/porta inacessível, ativando fallback:', e);
       }
+
+      // Se a API não responder (ex: testando localmente ou KV não configurado no Cloudflare), faz o sorteio localmente:
+      if (!destinoUrl) {
+        const SALAS = ['1', '2', '3', '4'];
+        let pool = SALAS.filter((id) => !vistas.includes(id));
+        if (!pool.length) pool = SALAS;
+        const sorteada = pool[Math.floor(Math.random() * pool.length)];
+        try { localStorage.setItem('portas-vistas', JSON.stringify([...new Set([...vistas, sorteada])])); } catch {}
+        destinoUrl = '_sala-' + sorteada + '.html';
+      }
+
+      // Efeito de flash e redirecionamento para a sala
+      const flash = document.createElement('div');
+      flash.className = 'porta-flash';
+      document.body.appendChild(flash);
+      requestAnimationFrame(() => (flash.style.opacity = 1));
+      setTimeout(() => { location.href = destinoUrl; }, 1000);
     });
   }
 
